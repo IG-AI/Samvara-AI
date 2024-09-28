@@ -155,8 +155,6 @@ The **material layers** process structured data, such as images and text, with i
 
 - **main.py**: The entry point of the application where both material and immaterial models are built and executed.
 
-- **README.md**: Project documentation, including instructions on how to set up and run the project.
-
 ---
 
 ### **Contributing**
