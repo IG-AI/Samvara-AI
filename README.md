@@ -134,6 +134,29 @@ The **material layers** process structured data, such as images and text, with i
 
 ---
 
+### **File structure**
+/Samvara-AI
+│
+├── /models
+│   ├── material_layers.py         # Contains the code for material layers (1-6)
+│   ├── immaterial_layers.py       # Contains the code for quantum-inspired layers (7-15)
+│
+├── /utils
+│   └── helpers.py                 # Utility functions (data loading, preprocessing, etc.)
+│
+├── /scripts                       # Bash scripts for automating setup or execution
+│   ├── setup_script.sh            # Example setup script
+│   ├── build_and_push.sh          # Docker build and push script
+│   ├── start_vm.sh                # Start VM script
+│   ├── stop_vm.sh                 # Stop VM script
+│
+├── Dockerfile                     # Dockerfile for containerizing the project
+├── requirements.txt               # Python dependencies
+├── main.py                        # Main script to run the model
+└── README.md                      # Project documentation
+
+---
+
 ### **Contributing**
 We welcome contributions from the community! Feel free to submit pull requests or open issues if you have suggestions for improvements or encounter bugs.
 
