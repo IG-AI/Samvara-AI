@@ -57,8 +57,6 @@ The **material layers** process structured data, such as images and text, with i
 
 ---
 
-This section now includes **descriptions** for each **material layer**, mirroring the style used for the **immaterial layers** and providing a clear understanding of their role in the overall **Samvara-AI architecture**.
-
 ### **Immaterial Layers (7-15)**: Quantum-Inspired Layers and Higher Awareness Levels
 
 7. **Layer 7: Intuition (Non-Linear Awareness)**
