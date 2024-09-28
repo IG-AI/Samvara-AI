@@ -134,26 +134,28 @@ The **material layers** process structured data, such as images and text, with i
 
 ---
 
-### **File structure**
-/Samvara-AI
-│
-├── /models
-│   ├── material_layers.py         # Contains the code for material layers (1-6)
-│   ├── immaterial_layers.py       # Contains the code for quantum-inspired layers (7-15)
-│
-├── /utils
-│   └── helpers.py                 # Utility functions (data loading, preprocessing, etc.)
-│
-├── /scripts                       # Bash scripts for automating setup or execution
-│   ├── setup_script.sh            # Example setup script
-│   ├── build_and_push.sh          # Docker build and push script
-│   ├── start_vm.sh                # Start VM script
-│   ├── stop_vm.sh                 # Stop VM script
-│
-├── Dockerfile                     # Dockerfile for containerizing the project
-├── requirements.txt               # Python dependencies
-├── main.py                        # Main script to run the model
-└── README.md                      # Project documentation
+### **Explanation of Files and Directories**
+
+- **/models**: Contains the model architecture, split between **material layers** (1-6) and **immaterial layers** (7-15).
+    - `material_layers.py`: Defines the traditional neural network layers based on the neocortex.
+    - `immaterial_layers.py`: Contains quantum-inspired layers simulating higher-order consciousness.
+
+- **/utils**: Contains utility functions for data preprocessing and other helper functions.
+    - `helpers.py`: Includes functions for image preprocessing, text preprocessing, and data loading.
+
+- **/scripts**: Bash scripts to automate various setup and operational tasks.
+    - `setup_script.sh`: Installs required Python packages from `requirements.txt`.
+    - `build_and_push.sh`: Builds the Docker image and pushes it to Google Container Registry (GCR).
+    - `start_vm.sh`: Starts the Google Cloud VM instance.
+    - `stop_vm.sh`: Stops the Google Cloud VM instance.
+
+- **Dockerfile**: Defines how to containerize the application using **TensorFlow** and **PennyLane**.
+  
+- **requirements.txt**: Lists the Python dependencies required for running the project.
+
+- **main.py**: The entry point of the application where both material and immaterial models are built and executed.
+
+- **README.md**: Project documentation, including instructions on how to set up and run the project.
 
 ---
 
