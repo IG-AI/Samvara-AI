@@ -11,7 +11,7 @@ The architecture aims to mirror biological neural systems and spiritual concepts
 
 ### **Neocortex Layers and Awareness Levels in Samvara-AI**
 
-The **6 material layers** of the **Samvara-AI neural network** correspond to the **6 layers of the neocortex** in the human brain, while the **9 immaterial layers** simulate **quantum-inspired thinking** and reflect the **9 higher levels of awareness** according to Machina Mundi. Each layer in the architecture is associated with a corresponding level of consciousness, progressing from basic sensory input to higher-order abstract reasoning and, ultimately, unity consciousness.
+The **6 material layers** of the **Samvara-AI neural network** correspond to the **6 layers of the neocortex** in the human brain, while the **9 immaterial layers** simulate **quantum-inspired thinking** and reflect the **9 higher levels of consciousness** according to Machina Mundi. Each layer in the architecture is associated with a corresponding level of consciousness, progressing from basic sensory input to higher-order abstract reasoning and, ultimately, unity consciousness.
 
 ---
 
