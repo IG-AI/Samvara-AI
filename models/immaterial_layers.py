@@ -5,26 +5,6 @@ from tensorflow.keras import layers, models
 import pennylane as qml
 from pennylane import numpy as np
 
-# Custom layer to handle complex values
-class ComplexLayer(layers.Layer):
-    def __init__(self, units):
-        super(ComplexLayer, self).__init__()
-        self.units = units
-
-    def build(self, input_shape):
-        self.real_dense = layers.Dense(self.units)
-        self.imag_dense = layers.Dense(self.units)
-
-    def call(self, inputs):
-        real_part = tf.math.real(inputs)
-        imaginary_part = tf.math.imag(inputs)
-
-        processed_real = self.real_dense(real_part)
-        processed_imaginary = self.imag_dense(imaginary_part)
-
-        # Reconstruct the complex number
-        return tf.complex(processed_real, processed_imaginary)
-
 # Quantum layer using PennyLane
 def quantum_layer(inputs):
     # Define a PennyLane device
@@ -43,21 +23,29 @@ def quantum_layer(inputs):
     weight_shapes = {"weights": (6,)}
     q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2)
     
-    # Apply complex layer to process quantum inputs
-    complex_output = ComplexLayer(units=64)(q_layer(inputs))
-    return complex_output
+    return q_layer(inputs)
 
 def build_immaterial_model():
     # Inputs: quantum data and material model output
-    quantum_input = layers.Input(shape=(2,), dtype=tf.complex128, name='quantum_input')
+    quantum_input = layers.Input(shape=(2,), name='quantum_input')
     material_output = layers.Input(shape=(128,), name='material_output')  # Shape from the material model
 
     # Quantum layer processing
     quantum_output = quantum_layer(quantum_input)
 
+    # Split real and imaginary parts of quantum output
+    real_part = tf.math.real(quantum_output)
+    imaginary_part = tf.math.imag(quantum_output)
+
     # Dense layers processing immaterial inputs
-    immaterial_dense = layers.Dense(64, activation='relu')(quantum_output)
-    immaterial_dense = layers.Dense(128, activation='relu')(immaterial_dense)
+    real_dense = layers.Dense(64, activation='relu')(real_part)
+    imag_dense = layers.Dense(64, activation='relu')(imaginary_part)
+
+    # Combine real and imaginary processed outputs
+    combined_quantum = layers.Concatenate()([real_dense, imag_dense])
+
+    # Further dense layers for immaterial processing
+    immaterial_dense = layers.Dense(128, activation='relu')(combined_quantum)
 
     # Combine immaterial with material output
     combined = layers.Concatenate()([material_output, immaterial_dense])
