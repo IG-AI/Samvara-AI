@@ -106,9 +106,6 @@ The **material layers** process structured data, such as images and text, with i
 
 ---
 
-Here's the updated Markdown content including `run_in_screen.sh`:
-
-```markdown
 ## How to Get Started
 
 ### Prerequisites
@@ -181,4 +178,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - **Expansion of Quantum Features**: Explore more advanced quantum-inspired mechanisms to enhance the immaterial layers' capabilities.
 - **Multimodal Inputs**: Extend the network's capabilities to handle audio, video, and other sensory data, enriching its understanding of the world.
 - **Ethical AI**: Continue refining the ethical decision-making layer, ensuring Samvara-AI aligns with compassionate and non-egoistic goals.
-```
+
+---
