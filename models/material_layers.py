@@ -3,7 +3,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models
 
-def build_hybrid_anastomatic_model():
+def build_material_model():
     # Input layer for images and text
     image_input = layers.Input(shape=(32, 32, 3), name='image_input')
     text_input = layers.Input(shape=(100,), name='text_input')
