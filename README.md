@@ -106,6 +106,9 @@ The **material layers** process structured data, such as images and text, with i
 
 ---
 
+Here's the updated Markdown content including `run_in_screen.sh`:
+
+```markdown
 ## How to Get Started
 
 ### Prerequisites
@@ -128,6 +131,12 @@ The **material layers** process structured data, such as images and text, with i
    ```
 
 3. **Run the Model**:
+   If you'd like to run the model in a `screen` session (to keep it running even if you disconnect):
+   ```bash
+   ./scripts/run_in_screen.sh
+   ```
+
+   Otherwise, simply run:
    ```bash
    python main.py
    ```
@@ -150,7 +159,8 @@ The **material layers** process structured data, such as images and text, with i
   - **build_and_push.sh**: Builds the Docker image and pushes it to Google Container Registry (GCR).
   - **start_vm.sh**: Starts the Google Cloud VM instance.
   - **stop_vm.sh**: Stops the Google Cloud VM instance.
-  
+  - **run_in_screen.sh**: Starts the model training in a `screen` session so it runs independently of the terminal session.
+
 - **Dockerfile**: Defines how to containerize the application using TensorFlow and PennyLane.
 - **requirements.txt**: Lists the Python dependencies required for running the project.
 - **main.py**: The main script to run the model, train it efficiently, monitor GPU usage, and save checkpoints with early stopping.
@@ -172,5 +182,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - **Multimodal Inputs**: Extend the network's capabilities to handle audio, video, and other sensory data, enriching its understanding of the world.
 - **Ethical AI**: Continue refining the ethical decision-making layer, ensuring Samvara-AI aligns with compassionate and non-egoistic goals.
 ```
-
-This version provides a clean structure using Markdown to enhance readability and ease of navigation. Let me know if you need further adjustments!
