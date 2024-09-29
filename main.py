@@ -1,21 +1,77 @@
-# main.py
+import numpy as np
+import tensorflow as tf
+from samvara_model import build_samvara_model
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
-from models.material_layers import build_material_model
-from models.immaterial_layers import build_immaterial_model
+# Set random seed for reproducibility
+np.random.seed(42)
+tf.random.set_seed(42)
 
-# Build the material model (Layers 1-6)
-material_model = build_material_model()
+# Hyperparameters
+BATCH_SIZE = 32
+EPOCHS = 50  # Early stopping will likely prevent reaching the max
+LEARNING_RATE = 0.001
 
-# Build the immaterial model (Layers 7-15)
-immaterial_model = build_immaterial_model()
+# Data Augmentation for Image Data
+data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    horizontal_flip=True
+)
 
-# Optionally: Combine both models (if you want them as one system)
-# For example, you could connect the output of material_model to the input of immaterial_model
-# and create a unified model.
+# Efficient data handling (dummy data for example purposes)
+def load_data():
+    # Replace with actual data loading
+    num_samples = 1000
+    image_data = np.random.random((num_samples, 32, 32, 3))
+    text_data = np.random.randint(10000, size=(num_samples, 100))
+    quantum_data = np.random.random((num_samples, 2))
+    labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
+    
+    return image_data, text_data, quantum_data, labels
 
-# Summarize the models
-print("Material Model Summary:")
-material_model.summary()
+# Load data
+image_data, text_data, quantum_data, labels = load_data()
 
-print("\nImmaterial Model Summary:")
-immaterial_model.summary()
+# Augment the image data
+train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZE)
+
+# Build the Samvara model
+model = build_samvara_model()
+
+# Compile the model with a lower learning rate for better optimization
+optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
+model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Model Checkpoint: Save the best model during training
+checkpoint = ModelCheckpoint(
+    filepath='best_model.h5',
+    save_best_only=True,
+    monitor='val_loss',
+    verbose=1
+)
+
+# Early Stopping: Stop training if validation loss doesn't improve after 5 epochs
+early_stopping = EarlyStopping(
+    monitor='val_loss',
+    patience=5,
+    restore_best_weights=True,
+    verbose=1
+)
+
+# Efficiently train the model
+history = model.fit(
+    [image_data, text_data, quantum_data],
+    labels,
+    validation_split=0.2,  # Use 20% of the data for validation
+    epochs=EPOCHS,
+    batch_size=BATCH_SIZE,
+    callbacks=[checkpoint, early_stopping],
+    verbose=1
+)
+
+# Evaluate the model
+loss, accuracy = model.evaluate([image_data, text_data, quantum_data], labels)
+print(f"Final Loss: {loss}, Final Accuracy: {accuracy}")
+
