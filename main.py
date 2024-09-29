@@ -1,5 +1,6 @@
-import numpy as np
+kimport numpy as np
 import tensorflow as tf
+import tensorflow_datasets as tfds
 from samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
@@ -20,22 +21,31 @@ data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
     horizontal_flip=True
 )
 
-# Efficient data handling (dummy data for example purposes)
+# Efficient data handling using TensorFlow Datasets (example with FER2013 and IMDB)
 def load_data():
-    # Replace with actual data loading
-    num_samples = 1000
-    image_data = np.random.random((num_samples, 32, 32, 3))
-    text_data = np.random.randint(10000, size=(num_samples, 100))
-    quantum_data = np.random.random((num_samples, 2))
-    labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
+    # Load FER2013 dataset (Facial Expression Recognition)
+    train_data, test_data = tfds.load('fer2013', split=['train', 'test'], as_supervised=True)
     
-    return image_data, text_data, quantum_data, labels
+    # Preprocess the image data (resize and normalize)
+    def preprocess_image(image, label):
+        image = tf.image.resize(image, [32, 32])
+        image = image / 255.0  # Normalize to [0, 1] range
+        return image, label
 
-# Load data
-image_data, text_data, quantum_data, labels = load_data()
+    train_data = train_data.map(preprocess_image).batch(BATCH_SIZE)
+    test_data = test_data.map(preprocess_image).batch(BATCH_SIZE)
+    
+    # Load IMDB Reviews dataset (for text input)
+    imdb_train, imdb_test = tfds.load('imdb_reviews/subwords8k', split=['train', 'test'], as_supervised=True)
+    
+    # Quantum data: synthetic or from a quantum source
+    num_samples = 10000
+    quantum_data = np.random.random((num_samples, 2))  # You can customize this
 
-# Augment the image data
-train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZE)
+    return train_data, test_data, imdb_train, imdb_test, quantum_data
+
+# Load real datasets
+train_data, test_data, imdb_train, imdb_test, quantum_data = load_data()
 
 # Build the Samvara model
 model = build_samvara_model()
@@ -60,18 +70,16 @@ early_stopping = EarlyStopping(
     verbose=1
 )
 
-# Efficiently train the model
+# Train the model efficiently
 history = model.fit(
-    [image_data, text_data, quantum_data],
-    labels,
-    validation_split=0.2,  # Use 20% of the data for validation
+    [train_data, imdb_train, quantum_data],
     epochs=EPOCHS,
-    batch_size=BATCH_SIZE,
+    validation_data=([test_data, imdb_test, quantum_data], test_labels),
     callbacks=[checkpoint, early_stopping],
     verbose=1
 )
 
 # Evaluate the model
-loss, accuracy = model.evaluate([image_data, text_data, quantum_data], labels)
+loss, accuracy = model.evaluate([test_data, imdb_test, quantum_data])
 print(f"Final Loss: {loss}, Final Accuracy: {accuracy}")
 
