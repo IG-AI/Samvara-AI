@@ -23,7 +23,7 @@ def build_hybrid_anastomatic_model():
     dense_layer = layers.Dense(512, activation='relu')(combined_features)
 
     # Lateral connection between Layer 3 and Layer 4
-    dense_layer = layers.Dropout(0.5)(dense_layer)  # Dropout for regularization
+    dense_layer = layers.Dropout(0.5)(dense_layer)
     contextual_layer = layers.Dense(256, activation='relu')(dense_layer)
     lateral_combined = layers.Concatenate()([dense_layer, contextual_layer])
     lateral_layer = layers.Dense(256, activation='relu')(lateral_combined)
@@ -31,22 +31,19 @@ def build_hybrid_anastomatic_model():
     # Decision making (Layer 5)
     decision_layer = layers.Dense(128, activation='relu')(lateral_layer)
 
-    # Feedback loop from decision-making (Layer 5) to early feature extraction (Layer 2)
-    refined_features = layers.Concatenate()([dense_layer, decision_layer])
-    refined_early_features = layers.Dense(512, activation='relu')(refined_features)
-
-    # Skip connection (bidirectional flow) from Layer 4 to Layer 2
-    skip_connection = layers.Add()([image_features_flat, contextual_layer])
-    bidirectional_features = layers.Dense(128, activation='relu')(skip_connection)
+    # Feedback from immaterial layer (Layer 15) to refine sensory input
+    immaterial_feedback = layers.Input(shape=(64,), name='immaterial_feedback')
+    refined_input = layers.Concatenate()([decision_layer, immaterial_feedback])
+    refined_layer = layers.Dense(128, activation='relu')(refined_input)
 
     # Final refinement (Layer 6)
-    refinement_layer = layers.Dense(64, activation='relu')(bidirectional_features)
+    refinement_layer = layers.Dense(64, activation='relu')(refined_layer)
 
-    # Output layer (e.g., 10 classes for classification)
+    # Output layer
     output = layers.Dense(10, activation='softmax')(refinement_layer)
 
     # Build the model
-    model = models.Model(inputs=[image_input, text_input], outputs=output)
+    model = models.Model(inputs=[image_input, text_input, immaterial_feedback], outputs=output)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model

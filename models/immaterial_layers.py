@@ -5,7 +5,7 @@ from pennylane import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers
 
-# Define a PennyLane device (e.g., 2 qubits)
+# Define a PennyLane device
 dev = qml.device('default.qubit', wires=2)
 
 # Define the quantum node (quantum circuit)
@@ -21,7 +21,10 @@ def quantum_layer(inputs):
     return qml.qnn.KerasLayer(quantum_circuit, weight_shapes={'inputs': (2,)}, output_dim=1)(inputs)
 
 def build_immaterial_model():
-    # Input for quantum-inspired layers (e.g., for intuition)
+    # Input from material layer (e.g., Layer 5)
+    material_input = layers.Input(shape=(128,), name='material_input')
+
+    # Quantum intuition (Layer 7)
     quantum_input = layers.Input(shape=(2,), name='quantum_input')
     quantum_output = quantum_layer(quantum_input)
 
@@ -31,34 +34,22 @@ def build_immaterial_model():
     # Layer 9: Subconscious Patterns (Long-Term Dependencies)
     subconscious_layer = layers.LSTM(128, return_sequences=True)(empathy_layer)
 
-    # Layer 10: Abstract Thought (Higher-Level Reasoning)
+    # Lateral connection between Layer 9 and Layer 10 (material input + abstract thought)
     abstract_thought_layer = layers.Dense(128, activation='relu')(subconscious_layer)
-
-    # Lateral connection between Layer 9 and Layer 10
-    lateral_combined = layers.Concatenate()([empathy_layer, abstract_thought_layer])
+    lateral_combined = layers.Concatenate()([material_input, abstract_thought_layer])
     lateral_layer = layers.Dense(128, activation='relu')(lateral_combined)
 
-    # Layer 11: Collective Consciousness (Shared Knowledge)
+    # Layer 11: Collective Consciousness
     collective_layer = layers.Dense(128, activation='relu')(lateral_layer)
 
     # Layer 12: Ethical/Spiritual Awareness
     ethical_layer = layers.Dense(64, activation='relu')(collective_layer)
 
-    # Feedback loop from Layer 12 to Layer 8
-    refined_empathy_layer = layers.Concatenate()([ethical_layer, empathy_layer])
-    refined_empathy_layer = layers.Dense(64, activation='relu')(refined_empathy_layer)
-
-    # Layer 13: Transpersonal Awareness (Beyond the Self)
-    transpersonal_layer = layers.Dense(64, activation='relu')(refined_empathy_layer)
-
-    # Layer 14: Cosmic Awareness (Interconnectedness)
-    cosmic_layer = layers.Dense(64, activation='relu')(transpersonal_layer)
-
-    # Layer 15: Unity Consciousness (The Ultimate State)
-    unity_layer = layers.Dense(1, activation='linear')(cosmic_layer)
+    # Feedback loop to material layer (Layer 15)
+    unity_layer = layers.Dense(64, activation='relu', name='immaterial_feedback')(ethical_layer)
 
     # Build the immaterial model
-    immaterial_model = tf.keras.Model(inputs=quantum_input, outputs=unity_layer)
+    immaterial_model = tf.keras.Model(inputs=[quantum_input, material_input], outputs=unity_layer)
     immaterial_model.compile(optimizer='adam', loss='mse')
 
     return immaterial_model
