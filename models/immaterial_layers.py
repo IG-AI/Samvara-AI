@@ -5,20 +5,28 @@ from pennylane import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers
 
-# Define a PennyLane device
+
+import pennylane as qml
+
+# Define a PennyLane device (this will execute the quantum circuit)
 dev = qml.device('default.qubit', wires=2)
 
 # Define the quantum node (quantum circuit)
 @qml.qnode(dev)
-def quantum_circuit(inputs):
-    qml.RX(inputs[0], wires=0)
-    qml.RY(inputs[1], wires=1)
-    qml.CNOT(wires=[0, 1])
+def quantum_circuit(inputs, weights):
+    # Embedding the inputs in the quantum circuit
+    qml.templates.AngleEmbedding(inputs, wires=range(2))
+    # Apply trainable quantum layers
+    qml.templates.BasicEntanglerLayers(weights, wires=range(2))
+    # Measure the expectation value of Pauli-Z on the first qubit
     return qml.expval(qml.PauliZ(0))
 
-# Quantum layer for intuition (Layer 7)
+# Define the quantum layer using the KerasLayer
 def quantum_layer(inputs):
-    return qml.qnn.KerasLayer(quantum_circuit, weight_shapes={'inputs': (2,)}, output_dim=1)(inputs)
+    # Define the weight shapes for the quantum circuit (but exclude inputs)
+    weight_shapes = {"weights": (3, 2)}  # Adjust the shapes based on your model
+    # Create the KerasLayer for the quantum circuit
+    return qml.qnn.KerasLayer(quantum_circuit, weight_shapes=weight_shapes, output_dim=1)(inputs)
 
 def build_immaterial_model():
     # Input from material layer (e.g., Layer 5)
