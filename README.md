@@ -136,9 +136,10 @@ The **material layers** process structured data, such as images and text, with i
 
 ### **Explanation of Files and Directories**
 
-- **/models**: Contains the model architecture, split between **material layers** (1-6) and **immaterial layers** (7-15).
-    - `material_layers.py`: Defines the traditional neural network layers based on the neocortex.
-    - `immaterial_layers.py`: Contains quantum-inspired layers simulating higher-order consciousness.
+- **/models**: Contains the model architecture, including **material layers** (1-6), **immaterial layers** (7-15), and the integrated **Samvara-AI** model.
+    - `material_layers.py`: Defines the traditional neural network layers based on the neocortex, with feedback and lateral connections.
+    - `immaterial_layers.py`: Contains quantum-inspired layers simulating higher-order consciousness, with feedback loops to and from the material layers.
+    - `samvara_model.py`: Integrates both the **material** and **immaterial layers** into a unified model for Samvara-AI.
 
 - **/utils**: Contains utility functions for data preprocessing and other helper functions.
     - `helpers.py`: Includes functions for image preprocessing, text preprocessing, and data loading.
@@ -153,7 +154,7 @@ The **material layers** process structured data, such as images and text, with i
   
 - **requirements.txt**: Lists the Python dependencies required for running the project.
 
-- **main.py**: The entry point of the application where both material and immaterial models are built and executed.
+- **main.py**: The main script to run the model, train it efficiently, and save checkpoints with early stopping.
 
 ---
 
