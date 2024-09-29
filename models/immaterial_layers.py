@@ -1,63 +1,58 @@
-# models/immaterial_layers.py
-
 import pennylane as qml
-from pennylane import numpy as np
-import tensorflow as tf
 from tensorflow.keras import layers
+import tensorflow as tf
 
-
-import pennylane as qml
-
-# Define a PennyLane device (this will execute the quantum circuit)
+# Define a PennyLane device (quantum simulator)
 dev = qml.device('default.qubit', wires=2)
 
 # Define the quantum node (quantum circuit)
 @qml.qnode(dev)
 def quantum_circuit(inputs, weights):
-    # Embedding the inputs in the quantum circuit
+    # Quantum input embedding
     qml.templates.AngleEmbedding(inputs, wires=range(2))
-    # Apply trainable quantum layers
+    # Trainable quantum layers
     qml.templates.BasicEntanglerLayers(weights, wires=range(2))
-    # Measure the expectation value of Pauli-Z on the first qubit
+    # Measure the expectation value of PauliZ on the first qubit
     return qml.expval(qml.PauliZ(0))
 
-# Define the quantum layer using the KerasLayer
+# Quantum layer using PennyLane's KerasLayer
 def quantum_layer(inputs):
-    # Define the weight shapes for the quantum circuit (but exclude inputs)
-    weight_shapes = {"weights": (3, 2)}  # Adjust the shapes based on your model
-    # Create the KerasLayer for the quantum circuit
+    # Define weight shapes for the quantum circuit, exclude input shape
+    weight_shapes = {"weights": (3, 2)}  # Adjust according to circuit complexity
+    # Use KerasLayer to create the quantum layer
     return qml.qnn.KerasLayer(quantum_circuit, weight_shapes=weight_shapes, output_dim=1)(inputs)
 
+# Build the immaterial layers (higher-order quantum-inspired layers)
 def build_immaterial_model():
-    # Input from material layer (e.g., Layer 5)
-    material_input = layers.Input(shape=(128,), name='material_input')
-
-    # Quantum intuition (Layer 7)
+    # Input layer for quantum data (e.g., 2-dimensional input for qubits)
     quantum_input = layers.Input(shape=(2,), name='quantum_input')
+    
+    # Apply quantum layer
     quantum_output = quantum_layer(quantum_input)
 
-    # Layer 8: Emotional Intelligence (Empathy)
-    empathy_layer = layers.Dense(64, activation='relu')(quantum_output)
+    # Additional layers for the immaterial model
+    # Emotional Intelligence (Empathy Layer)
+    empathy_layer = layers.Dense(64, activation='relu', name='empathy_layer')(quantum_output)
+    
+    # Reshape the input for the LSTM (add a timestep dimension for sequence processing)
+    reshaped_empathy_layer = tf.expand_dims(empathy_layer, axis=1)  # Shape: (batch_size, 1, features)
+    
+    # Subconscious Layer (LSTM with return_sequences=True to keep outputs for later processing)
+    subconscious_layer = layers.LSTM(128, return_sequences=True, name='subconscious_layer')(reshaped_empathy_layer)
+    
+    # Abstract Thought Layer (Higher-Level Reasoning)
+    abstract_layer = layers.Dense(64, activation='relu', name='abstract_thought_layer')(subconscious_layer)
+    
+    # Collective Consciousness Layer
+    collective_layer = layers.Dense(32, activation='relu', name='collective_consciousness_layer')(abstract_layer)
 
-    # Layer 9: Subconscious Patterns (Long-Term Dependencies)
-    subconscious_layer = layers.LSTM(128, return_sequences=True)(empathy_layer)
+    # Ethical/Spiritual Awareness Layer
+    ethical_layer = layers.Dense(32, activation='relu', name='ethical_layer')(collective_layer)
 
-    # Lateral connection between Layer 9 and Layer 10 (material input + abstract thought)
-    abstract_thought_layer = layers.Dense(128, activation='relu')(subconscious_layer)
-    lateral_combined = layers.Concatenate()([material_input, abstract_thought_layer])
-    lateral_layer = layers.Dense(128, activation='relu')(lateral_combined)
+    # Final output layer for immaterial model
+    output_layer = layers.Dense(1, activation='sigmoid', name='output_layer')(ethical_layer)
 
-    # Layer 11: Collective Consciousness
-    collective_layer = layers.Dense(128, activation='relu')(lateral_layer)
-
-    # Layer 12: Ethical/Spiritual Awareness
-    ethical_layer = layers.Dense(64, activation='relu')(collective_layer)
-
-    # Feedback loop to material layer (Layer 15)
-    unity_layer = layers.Dense(64, activation='relu', name='immaterial_feedback')(ethical_layer)
-
-    # Build the immaterial model
-    immaterial_model = tf.keras.Model(inputs=[quantum_input, material_input], outputs=unity_layer)
-    immaterial_model.compile(optimizer='adam', loss='mse')
+    # Build the model
+    immaterial_model = tf.keras.Model(inputs=quantum_input, outputs=output_layer, name="Immaterial_Model")
 
     return immaterial_model
