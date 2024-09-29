@@ -141,8 +141,9 @@ The **material layers** process structured data, such as images and text, with i
     - `immaterial_layers.py`: Contains quantum-inspired layers simulating higher-order consciousness, with feedback loops to and from the material layers.
     - `samvara_model.py`: Integrates both the **material** and **immaterial layers** into a unified model for Samvara-AI.
 
-- **/utils**: Contains utility functions for data preprocessing and other helper functions.
+- **/utils**: Contains utility functions for data preprocessing and GPU monitoring.
     - `helpers.py`: Includes functions for image preprocessing, text preprocessing, and data loading.
+    - `gpu_monitor.py`: Monitors GPU usage during training using **nvidia-smi** and logs it periodically.
 
 - **/scripts**: Bash scripts to automate various setup and operational tasks.
     - `setup_script.sh`: Installs required Python packages from `requirements.txt`.
@@ -154,7 +155,7 @@ The **material layers** process structured data, such as images and text, with i
   
 - **requirements.txt**: Lists the Python dependencies required for running the project.
 
-- **main.py**: The main script to run the model, train it efficiently, and save checkpoints with early stopping.
+- **main.py**: The main script to run the model, train it efficiently, monitor GPU usage, and save checkpoints with early stopping.
 
 ---
 
