@@ -5,6 +5,27 @@ from tensorflow.keras import layers, models
 import pennylane as qml
 from pennylane import numpy as np
 
+# Custom layer to handle complex values
+class ComplexLayer(layers.Layer):
+    def __init__(self, units):
+        super(ComplexLayer, self).__init__()
+        self.units = units
+
+    def build(self, input_shape):
+        self.real_dense = layers.Dense(self.units)
+        self.imag_dense = layers.Dense(self.units)
+
+    def call(self, inputs):
+        real_part = tf.math.real(inputs)
+        imaginary_part = tf.math.imag(inputs)
+
+        processed_real = self.real_dense(real_part)
+        processed_imaginary = self.imag_dense(imaginary_part)
+
+        # Reconstruct the complex number
+        return tf.complex(processed_real, processed_imaginary)
+
+# Quantum layer using PennyLane
 def quantum_layer(inputs):
     # Define a PennyLane device
     dev = qml.device('default.qubit', wires=2)
@@ -21,11 +42,14 @@ def quantum_layer(inputs):
 
     weight_shapes = {"weights": (6,)}
     q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2)
-    return q_layer(inputs)
+    
+    # Apply complex layer to process quantum inputs
+    complex_output = ComplexLayer(units=64)(q_layer(inputs))
+    return complex_output
 
 def build_immaterial_model():
     # Inputs: quantum data and material model output
-    quantum_input = layers.Input(shape=(2,), name='quantum_input')
+    quantum_input = layers.Input(shape=(2,), dtype=tf.complex128, name='quantum_input')
     material_output = layers.Input(shape=(128,), name='material_output')  # Shape from the material model
 
     # Quantum layer processing
