@@ -28,7 +28,7 @@ def load_data():
     num_samples = 1000
     image_data = np.random.random((num_samples, 32, 32, 3))
     text_data = np.random.randint(10000, size=(num_samples, 100))
-    quantum_data = np.random.random((num_samples, 2)) + 1j * np.random.random((num_samples, 2))  # Complex quantum data
+    quantum_data = np.random.random((num_samples, 2))
     labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
     
     return image_data, text_data, quantum_data, labels
