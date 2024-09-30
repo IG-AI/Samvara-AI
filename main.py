@@ -7,6 +7,8 @@ from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import h5py
 import time
+import uuid
+import stat
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -34,6 +36,30 @@ def load_data():
     labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
     return image_data, text_data, quantum_data, labels
 
+# Function to set directory permissions and create the directory if it doesn't exist
+def ensure_directory_exists_and_writable(dir_path):
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    # Make sure directory is writable
+    os.chmod(dir_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # Set 777 permissions
+
+# Clear old checkpoints to prevent conflicts
+def clear_existing_checkpoints(checkpoint_dir):
+    for file in os.listdir(checkpoint_dir):
+        if file.endswith(".h5"):
+            os.remove(os.path.join(checkpoint_dir, file))
+
+# Generate a unique filename for checkpoints and final models
+def generate_unique_filename(base_name='best_model', checkpoint_dir="checkpoints"):
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    unique_id = str(uuid.uuid4())
+    return f"{checkpoint_dir}/{base_name}_{timestamp}_{unique_id}.h5"
+
+# Set up directories and ensure proper permissions
+checkpoint_dir = "checkpoints/"
+ensure_directory_exists_and_writable(checkpoint_dir)
+clear_existing_checkpoints(checkpoint_dir)
+
 # Load data
 image_data, text_data, quantum_data, labels = load_data()
 
@@ -47,27 +73,8 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Create a directory for saving models if it doesn't exist
-checkpoint_dir = "checkpoints/"
-if not os.path.exists(checkpoint_dir):
-    os.makedirs(checkpoint_dir)
-
-# Function to delete previous checkpoints
-def clear_existing_checkpoints(checkpoint_dir):
-    for file in os.listdir(checkpoint_dir):
-        if file.endswith(".h5"):
-            os.remove(os.path.join(checkpoint_dir, file))
-
-# Clear any previous checkpoints
-clear_existing_checkpoints(checkpoint_dir)
-
-# Create a unique filename for checkpoints using timestamp
-def generate_unique_filename(base_name='best_model'):
-    timestamp = time.strftime("%Y%m%d-%H%M%S")
-    return f"{checkpoint_dir}/{base_name}_{timestamp}.h5"
-
 # Model Checkpoint: Save the best model during training with unique filenames
-checkpoint_path = generate_unique_filename()
+checkpoint_path = generate_unique_filename(base_name="best_model", checkpoint_dir=checkpoint_dir)
 
 checkpoint = ModelCheckpoint(
     filepath=checkpoint_path,
@@ -100,16 +107,12 @@ history = model.fit(
 )
 
 # Manually save the model's weights after training
-final_weights_path = f"{checkpoint_dir}/final_model_weights.h5"
-if os.path.exists(final_weights_path):
-    os.remove(final_weights_path)
+final_weights_path = generate_unique_filename(base_name='final_model_weights', checkpoint_dir=checkpoint_dir)
 model.save_weights(final_weights_path)
 print(f"Weights saved to {final_weights_path}")
 
 # Manually save the entire model after training
-final_model_path = f"{checkpoint_dir}/final_model"
-if os.path.exists(final_model_path):
-    os.rmdir(final_model_path)
+final_model_path = generate_unique_filename(base_name='final_model', checkpoint_dir=checkpoint_dir)
 model.save(final_model_path)
 print(f"Model saved to {final_model_path}")
 
