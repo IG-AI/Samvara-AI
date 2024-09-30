@@ -1,5 +1,6 @@
 # models/samvara_model.py
 
+import tensorflow as tf  # Add this line to import TensorFlow
 from tensorflow.keras.layers import Input, Dense, Concatenate
 from tensorflow.keras.models import Model
 from models.material_layers import build_material_model
@@ -20,7 +21,7 @@ def build_samvara_model():
     immaterial_output = immaterial_model(quantum_input)
 
     # Convert immaterial_output to float32 to match material_output type
-    immaterial_output_real = tf.math.real(immaterial_output)
+    immaterial_output_real = tf.math.real(immaterial_output)  # tf is now defined
     immaterial_output_float = tf.cast(immaterial_output_real, dtype=tf.float32)
 
     # Concatenate material and immaterial outputs (now both float32)
