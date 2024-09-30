@@ -20,8 +20,15 @@ def quantum_layer(inputs):
         qml.Rot(weights[3], weights[4], weights[5], wires=1)
         return [qml.expval(qml.PauliZ(i)) + 1j*qml.expval(qml.PauliX(i)) for i in range(2)]  # Returning complex values
 
+    # Define weight shapes and provide complex initializer
     weight_shapes = {"weights": (6,)}
-    q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2, dtype=tf.complex64)  # Ensure the layer expects complex numbers
+    q_layer = qml.qnn.KerasLayer(
+        quantum_circuit, 
+        weight_shapes, 
+        output_dim=2, 
+        dtype=tf.complex64,
+        kernel_initializer=tf.keras.initializers.RandomUniform(minval=-1.0, maxval=1.0, seed=None)  # Explicitly initialize weights
+    )
 
     return q_layer(inputs)
 
