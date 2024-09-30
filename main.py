@@ -99,7 +99,7 @@ logging.info(f"Quantum data (real) shape: {quantum_real.shape}, Quantum data (im
 
 # Train the model
 history = model.fit(
-    [image_data, text_data, quantum_real, quantum_imaginary],
+    [image_data, text_data],  # Pass only the image_data and text_data
     labels,
     validation_split=0.2,
     epochs=EPOCHS,
