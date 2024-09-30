@@ -1,23 +1,22 @@
 # main.py
 
-# main.py
-
 import os
 import numpy as np
 import tensorflow as tf
 from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+import h5py
 import time
 import uuid
 import stat
 import logging
 
+# Set logging configuration
+logging.basicConfig(level=logging.INFO)
+
 # Set random seed for reproducibility
 np.random.seed(42)
 tf.random.set_seed(42)
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
 
 # Hyperparameters
 BATCH_SIZE = 32
@@ -51,11 +50,10 @@ def ensure_directory_exists_and_writable(dir_path):
 
 # Clear old checkpoints to prevent conflicts
 def clear_existing_checkpoints(checkpoint_dir):
-    if os.path.exists(checkpoint_dir):
-        for file in os.listdir(checkpoint_dir):
-            if file.endswith(".ckpt"):
-                os.remove(os.path.join(checkpoint_dir, file))
-        logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
+    for file in os.listdir(checkpoint_dir):
+        if file.endswith(".h5"):
+            os.remove(os.path.join(checkpoint_dir, file))
+    logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
 # Generate a unique filename for checkpoints and final models
 def generate_unique_filename(base_name='best_model', checkpoint_dir="checkpoints"):
@@ -81,9 +79,16 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Model Checkpoint: Save the best model during training with unique filenames (TensorFlow format)
+# Check if the checkpoint path is None
 checkpoint_path = generate_unique_filename(base_name="best_model", checkpoint_dir=checkpoint_dir)
 
+if checkpoint_path is None:
+    raise ValueError("The checkpoint path is None. Please ensure the filename is correctly generated.")
+
+# Log the checkpoint path to ensure it's correct
+logging.info(f"Checkpoint path: {checkpoint_path}")
+
+# Model Checkpoint: Save the best model during training with unique filenames
 checkpoint = ModelCheckpoint(
     filepath=checkpoint_path,
     save_best_only=True,
@@ -119,7 +124,7 @@ final_weights_path = generate_unique_filename(base_name='final_model_weights', c
 model.save_weights(final_weights_path)
 logging.info(f"Weights saved to {final_weights_path}")
 
-# Manually save the entire model after training in TensorFlow native format
+# Manually save the entire model after training
 final_model_path = generate_unique_filename(base_name='final_model', checkpoint_dir=checkpoint_dir)
 model.save(final_model_path)
 logging.info(f"Model saved to {final_model_path}")
