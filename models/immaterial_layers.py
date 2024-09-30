@@ -1,7 +1,5 @@
 # models/immaterial_layers.py
 
-# immaterial_layers.py
-
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import pennylane as qml
@@ -32,18 +30,20 @@ def quantum_layer(inputs):
 
 def build_immaterial_model():
     # Inputs: quantum data and material model output
-    quantum_input = layers.Input(shape=(2,), name='quantum_input')
-    material_output = layers.Input(shape=(128,), name='material_output')  # Shape from the material model
+    quantum_input = layers.Input(shape=(2,), dtype=tf.complex128, name='quantum_input')
+    material_output = layers.Input(shape=(128,), dtype=tf.float32, name='material_output')  # Shape from the material model
 
     # Quantum layer processing
     quantum_output = quantum_layer(quantum_input)
 
-    # Split real and imaginary parts of quantum output
+    # Explicitly separate the real and imaginary parts
     real_part = tf.math.real(quantum_output)
     imaginary_part = tf.math.imag(quantum_output)
 
-    # Dense layers processing immaterial inputs
+    # Process the real part
     real_dense = layers.Dense(64, activation='relu')(real_part)
+    
+    # Process the imaginary part
     imag_dense = layers.Dense(64, activation='relu')(imaginary_part)
 
     # Combine real and imaginary processed outputs
