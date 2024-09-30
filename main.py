@@ -52,6 +52,15 @@ checkpoint_dir = "checkpoints/"
 if not os.path.exists(checkpoint_dir):
     os.makedirs(checkpoint_dir)
 
+# Function to delete previous checkpoints
+def clear_existing_checkpoints(checkpoint_dir):
+    for file in os.listdir(checkpoint_dir):
+        if file.endswith(".h5"):
+            os.remove(os.path.join(checkpoint_dir, file))
+
+# Clear any previous checkpoints
+clear_existing_checkpoints(checkpoint_dir)
+
 # Create a unique filename for checkpoints using timestamp
 def generate_unique_filename(base_name='best_model'):
     timestamp = time.strftime("%Y%m%d-%H%M%S")
