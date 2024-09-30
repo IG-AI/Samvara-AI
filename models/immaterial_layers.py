@@ -47,4 +47,3 @@ def build_immaterial_model():
 
     model = tf.keras.Model(inputs=[real_input, imaginary_input], outputs=q_layer)
     return model
-    
