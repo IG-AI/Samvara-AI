@@ -23,7 +23,7 @@ class CustomQuantumLayer(tf.keras.layers.Layer):
         real_part, imaginary_part = inputs
         real_output = tf.matmul(real_part, self.real_kernel)
         imaginary_output = tf.matmul(imaginary_part, self.imaginary_kernel)
-        # Avoiding returning complex values directly
+        # Instead of returning complex values, return summed real + imaginary parts
         return real_output + imaginary_output
 
     def compute_output_shape(self, input_shape):
