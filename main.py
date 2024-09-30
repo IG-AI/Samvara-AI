@@ -48,7 +48,7 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Define a function to safely remove an existing model file
+# Define a function to safely remove an existing file
 def safely_remove_file(filepath):
     if os.path.exists(filepath):
         os.remove(filepath)
@@ -56,16 +56,21 @@ def safely_remove_file(filepath):
 # Create unique filename for checkpoints
 checkpoint_path = 'best_model_{epoch:02d}-{val_loss:.2f}.h5'
 
-# Safely remove the file if it exists
-safely_remove_file(checkpoint_path)
+# Safely remove the file if it exists before saving
+def safe_model_checkpoint(filepath):
+    # If file exists, remove it before saving new one
+    safely_remove_file(filepath)
+
+    # Return the ModelCheckpoint callback with the updated path
+    return ModelCheckpoint(
+        filepath=filepath,
+        save_best_only=True,
+        monitor='val_loss',
+        verbose=1
+    )
 
 # Model Checkpoint: Save the best model during training with unique filenames
-checkpoint = ModelCheckpoint(
-    filepath=checkpoint_path,
-    save_best_only=True,
-    monitor='val_loss',
-    verbose=1
-)
+checkpoint = safe_model_checkpoint(checkpoint_path)
 
 # Early Stopping: Stop training if validation loss doesn't improve after 5 epochs
 early_stopping = EarlyStopping(
