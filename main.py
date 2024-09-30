@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+import h5py
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -47,13 +48,21 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
+# Define a function to safely remove HDF5 datasets
+def safely_remove_hdf5_datasets(filepath):
+    if os.path.exists(filepath):
+        with h5py.File(filepath, 'a') as f:
+            keys = list(f.keys())
+            for key in keys:
+                del f[key]
+
 # Before saving the model, remove the previous file if it exists
-if os.path.exists('best_model.h5'):
-    os.remove('best_model.h5')
+checkpoint_path = 'best_model_01-{epoch:02d}-{val_loss:.2f}.h5'
+safely_remove_hdf5_datasets(checkpoint_path)
 
 # Model Checkpoint: Save the best model during training
 checkpoint = ModelCheckpoint(
-    filepath='best_model_{epoch:02d}-{val_loss:.2f}.h5',  # Creates unique filenames for each epoch
+    filepath=checkpoint_path,
     save_best_only=True,
     monitor='val_loss',
     verbose=1
