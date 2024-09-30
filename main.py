@@ -5,7 +5,6 @@ import numpy as np
 import tensorflow as tf
 from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-import h5py
 import time
 
 # Set random seed for reproducibility
@@ -47,32 +46,20 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Define a function to safely remove an existing file
-def safely_remove_file(filepath):
-    if os.path.exists(filepath):
-        os.remove(filepath)
-
-# Create a unique filename for checkpoints using timestamp
-def generate_unique_filename(base_name='best_model'):
+# Create a unique directory for saving checkpoints using SavedModel format
+def generate_unique_directory(base_name='best_model'):
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    return f"{base_name}_{timestamp}.h5"
+    return f"{base_name}_{timestamp}"
 
-# Safely remove the file if it exists before saving
-def safe_model_checkpoint(filepath):
-    # If file exists, remove it before saving new one
-    safely_remove_file(filepath)
-
-    # Return the ModelCheckpoint callback with the updated path
-    return ModelCheckpoint(
-        filepath=filepath,
-        save_best_only=True,
-        monitor='val_loss',
-        verbose=1
-    )
-
-# Generate a unique filename for each checkpoint
-checkpoint_path = generate_unique_filename()
-checkpoint = safe_model_checkpoint(checkpoint_path)
+# ModelCheckpoint using SavedModel format
+checkpoint_dir = generate_unique_directory()
+checkpoint = ModelCheckpoint(
+    filepath=checkpoint_dir,  # Using SavedModel format (a directory)
+    save_best_only=True,
+    monitor='val_loss',
+    verbose=1,
+    save_format='tf'  # This specifies the SavedModel format
+)
 
 # Early Stopping: Stop training if validation loss doesn't improve after 5 epochs
 early_stopping = EarlyStopping(
@@ -82,7 +69,7 @@ early_stopping = EarlyStopping(
     verbose=1
 )
 
-# Train the model with unique checkpoint filenames
+# Train the model
 history = model.fit(
     [image_data, text_data, quantum_data],
     labels,
