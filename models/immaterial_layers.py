@@ -3,7 +3,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 
-# CustomQuantumLayer as defined earlier
+# Custom Quantum Layer
 class CustomQuantumLayer(tf.keras.layers.Layer):
     def __init__(self, units=2, **kwargs):
         super(CustomQuantumLayer, self).__init__(**kwargs)
