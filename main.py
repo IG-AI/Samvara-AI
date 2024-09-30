@@ -36,9 +36,10 @@ def load_data():
     num_samples = 1000
     image_data = np.random.random((num_samples, 32, 32, 3))
     text_data = np.random.randint(10000, size=(num_samples, 100))
-    quantum_data = np.random.random((num_samples, 2)) + 1j * np.random.random((num_samples, 2))  # Quantum data as complex numbers
+    quantum_data_real = np.random.random((num_samples, 2))  # Real part of quantum data
+    quantum_data_imaginary = np.random.random((num_samples, 2))  # Imaginary part of quantum data
     labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
-    return image_data, text_data, quantum_data, labels
+    return image_data, text_data, quantum_data_real, quantum_data_imaginary, labels
 
 # Function to set directory permissions and create the directory if it doesn't exist
 def ensure_directory_exists_and_writable(dir_path):
@@ -51,7 +52,7 @@ def ensure_directory_exists_and_writable(dir_path):
 # Clear old checkpoints to prevent conflicts
 def clear_existing_checkpoints(checkpoint_dir):
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".h5") or file.endswith(".ckpt"):
+        if file.endswith(".h5"):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
@@ -61,11 +62,7 @@ ensure_directory_exists_and_writable(checkpoint_dir)
 clear_existing_checkpoints(checkpoint_dir)
 
 # Load data
-image_data, text_data, quantum_data, labels = load_data()
-
-# Split quantum data into real and imaginary parts
-quantum_data_real = np.real(quantum_data)
-quantum_data_imaginary = np.imag(quantum_data)
+image_data, text_data, quantum_data_real, quantum_data_imaginary, labels = load_data()
 
 # Augment the image data
 train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZE)
@@ -99,7 +96,7 @@ model.summary()
 
 # Train the model
 history = model.fit(
-    [image_data, text_data, quantum_data_real, quantum_data_imaginary],  # Provide real and imaginary inputs separately
+    [image_data, text_data, quantum_data_real, quantum_data_imaginary],  # Real and imaginary parts separated
     labels,
     validation_split=0.2,  # Use 20% of the data for validation
     epochs=EPOCHS,
