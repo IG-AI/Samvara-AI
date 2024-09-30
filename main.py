@@ -48,19 +48,18 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Define a function to safely remove HDF5 datasets
-def safely_remove_hdf5_datasets(filepath):
+# Define a function to safely remove an existing model file
+def safely_remove_file(filepath):
     if os.path.exists(filepath):
-        with h5py.File(filepath, 'a') as f:
-            keys = list(f.keys())
-            for key in keys:
-                del f[key]
+        os.remove(filepath)
 
-# Before saving the model, remove the previous file if it exists
-checkpoint_path = 'best_model_01-{epoch:02d}-{val_loss:.2f}.h5'
-safely_remove_hdf5_datasets(checkpoint_path)
+# Create unique filename for checkpoints
+checkpoint_path = 'best_model_{epoch:02d}-{val_loss:.2f}.h5'
 
-# Model Checkpoint: Save the best model during training
+# Safely remove the file if it exists
+safely_remove_file(checkpoint_path)
+
+# Model Checkpoint: Save the best model during training with unique filenames
 checkpoint = ModelCheckpoint(
     filepath=checkpoint_path,
     save_best_only=True,
@@ -76,7 +75,7 @@ early_stopping = EarlyStopping(
     verbose=1
 )
 
-# Efficiently train the model
+# Train the model
 history = model.fit(
     [image_data, text_data, quantum_data],
     labels,
