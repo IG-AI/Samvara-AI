@@ -22,9 +22,7 @@ class CustomQuantumLayer(tf.keras.layers.Layer):
                                                 dtype=tf.float32)
 
     def call(self, inputs):
-        # Split the input into real and imaginary parts if needed
-        real_part = tf.math.real(inputs)
-        imaginary_part = tf.math.imag(inputs)
+        real_part, imaginary_part = inputs  # Expecting a tuple of real and imaginary parts
 
         # Perform matrix multiplication with the real and imaginary kernels
         real_output = tf.matmul(real_part, self.real_kernel)
@@ -36,10 +34,12 @@ class CustomQuantumLayer(tf.keras.layers.Layer):
 
 # Build the immaterial model
 def build_immaterial_model():
-    quantum_input = layers.Input(shape=(2,), dtype=tf.complex64, name="quantum_input")
+    # Split the quantum input into real and imaginary parts
+    real_input = layers.Input(shape=(2,), dtype=tf.float32, name="real_input")
+    imaginary_input = layers.Input(shape=(2,), dtype=tf.float32, name="imaginary_input")
     
-    # Replace the quantum layer with the custom quantum layer
-    q_layer = CustomQuantumLayer(units=2, name="custom_quantum_layer")(quantum_input)
+    # Apply the custom quantum layer
+    q_layer = CustomQuantumLayer(units=2, name="custom_quantum_layer")([real_input, imaginary_input])
 
-    model = tf.keras.Model(inputs=quantum_input, outputs=q_layer)
+    model = tf.keras.Model(inputs=[real_input, imaginary_input], outputs=q_layer)
     return model
