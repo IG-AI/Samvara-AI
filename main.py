@@ -1,8 +1,9 @@
+# main.py
+
 import numpy as np
 import tensorflow as tf
-from models.samvara_model import build_samvara_model
+from samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-import os
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -12,7 +13,6 @@ tf.random.set_seed(42)
 BATCH_SIZE = 32
 EPOCHS = 50
 LEARNING_RATE = 0.001
-CHECKPOINT_PATH = 'best_model.h5'  # Path to the checkpoint file
 
 # Data Augmentation for Image Data
 data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
@@ -24,6 +24,7 @@ data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
 
 # Efficient data handling (dummy data for example purposes)
 def load_data():
+    # Replace with actual data loading
     num_samples = 1000
     image_data = np.random.random((num_samples, 32, 32, 3))
     text_data = np.random.randint(10000, size=(num_samples, 100))
@@ -35,6 +36,9 @@ def load_data():
 # Load data
 image_data, text_data, quantum_data, labels = load_data()
 
+# Augment the image data
+train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZE)
+
 # Build the Samvara model
 model = build_samvara_model()
 
@@ -42,14 +46,9 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Check if a checkpoint exists and load it
-if os.path.exists(CHECKPOINT_PATH):
-    print("Loading the last checkpoint to resume training...")
-    model.load_weights(CHECKPOINT_PATH)
-
 # Model Checkpoint: Save the best model during training
 checkpoint = ModelCheckpoint(
-    filepath=CHECKPOINT_PATH,
+    filepath='best_model.h5',
     save_best_only=True,
     monitor='val_loss',
     verbose=1
@@ -63,11 +62,11 @@ early_stopping = EarlyStopping(
     verbose=1
 )
 
-# Train the model (continue from checkpoint if loaded)
+# Efficiently train the model
 history = model.fit(
     [image_data, text_data, quantum_data],
     labels,
-    validation_split=0.2,
+    validation_split=0.2,  # Use 20% of the data for validation
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[checkpoint, early_stopping],
