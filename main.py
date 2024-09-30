@@ -52,20 +52,25 @@ checkpoint_dir = "checkpoints/"
 if not os.path.exists(checkpoint_dir):
     os.makedirs(checkpoint_dir)
 
+# Clear out any existing files in the checkpoint directory (to avoid conflicts)
+for file in os.listdir(checkpoint_dir):
+    os.remove(os.path.join(checkpoint_dir, file))
+
 # Create a unique filename for checkpoints using timestamp
 def generate_unique_filename(base_name='best_model'):
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    return f"{checkpoint_dir}/{base_name}_{timestamp}.h5"
+    return f"{checkpoint_dir}/{base_name}_{timestamp}"
 
-# Model Checkpoint: Save the best model during training with unique filenames
+# Model Checkpoint: Save the best model during training with TensorFlow format
 checkpoint_path = generate_unique_filename()
 
 checkpoint = ModelCheckpoint(
-    filepath=checkpoint_path,
+    filepath=checkpoint_path,  # No '.h5', we use TensorFlow format
     save_best_only=True,
     monitor='val_loss',
     verbose=1,
-    save_weights_only=True,  # Save only weights
+    save_weights_only=False,  # Save the entire model (not just weights)
+    save_format='tf'  # Use TensorFlow's native format
 )
 
 # Early Stopping: Stop training if validation loss doesn't improve after 5 epochs
