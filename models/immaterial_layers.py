@@ -11,23 +11,23 @@ def quantum_layer(inputs):
     dev = qml.device('default.qubit', wires=2)
 
     # Define the quantum node (quantum circuit)
-    @qml.qnode(dev)
+    @qml.qnode(dev, interface='tf')
     def quantum_circuit(inputs, weights):
         qml.RX(inputs[0], wires=0)
         qml.RY(inputs[1], wires=1)
         qml.CNOT(wires=[0, 1])
         qml.Rot(weights[0], weights[1], weights[2], wires=0)
         qml.Rot(weights[3], weights[4], weights[5], wires=1)
-        return [qml.expval(qml.PauliZ(i)) for i in range(2)]
+        return [qml.expval(qml.PauliZ(i)) + 1j*qml.expval(qml.PauliX(i)) for i in range(2)]  # Returning complex values
 
     weight_shapes = {"weights": (6,)}
-    q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2)
-    
+    q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2, dtype=tf.complex64)  # Ensure the layer expects complex numbers
+
     return q_layer(inputs)
 
 def build_immaterial_model():
     # Inputs: quantum data and material model output
-    quantum_input = layers.Input(shape=(2,), name='quantum_input')
+    quantum_input = layers.Input(shape=(2,), name='quantum_input', dtype=tf.complex64)  # Specify complex input
     material_output = layers.Input(shape=(128,), name='material_output')  # Shape from the material model
 
     # Quantum layer processing
@@ -37,8 +37,10 @@ def build_immaterial_model():
     real_part = tf.math.real(quantum_output)
     imaginary_part = tf.math.imag(quantum_output)
 
-    # Dense layers processing immaterial inputs
+    # Dense layers processing the real part
     real_dense = layers.Dense(64, activation='relu')(real_part)
+
+    # Dense layers processing the imaginary part
     imag_dense = layers.Dense(64, activation='relu')(imaginary_part)
 
     # Combine real and imaginary processed outputs
