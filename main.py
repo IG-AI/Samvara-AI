@@ -5,10 +5,8 @@ import numpy as np
 import tensorflow as tf
 from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-import h5py
 import time
 import uuid
-import stat
 import logging
 
 # Set logging configuration
@@ -36,8 +34,11 @@ def load_data():
     num_samples = 1000
     image_data = np.random.random((num_samples, 32, 32, 3))
     text_data = np.random.randint(10000, size=(num_samples, 100))
-    quantum_data_real = np.random.random((num_samples, 2))  # Real part of quantum data
-    quantum_data_imaginary = np.random.random((num_samples, 2))  # Imaginary part of quantum data
+    
+    # Separate real and imaginary parts for quantum data
+    quantum_data_real = np.random.random((num_samples, 2))
+    quantum_data_imaginary = np.random.random((num_samples, 2))
+    
     labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
     return image_data, text_data, quantum_data_real, quantum_data_imaginary, labels
 
@@ -45,14 +46,12 @@ def load_data():
 def ensure_directory_exists_and_writable(dir_path):
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
-    # Make sure directory is writable
-    os.chmod(dir_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # Set 777 permissions
     logging.info(f"Directory {dir_path} exists and is writable.")
 
 # Clear old checkpoints to prevent conflicts
 def clear_existing_checkpoints(checkpoint_dir):
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".h5"):
+        if file.endswith(".ckpt"):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
