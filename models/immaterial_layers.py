@@ -3,6 +3,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import pennylane as qml
+from pennylane import numpy as np
 
 # Quantum layer using PennyLane
 def quantum_layer(inputs):
@@ -20,12 +21,7 @@ def quantum_layer(inputs):
         return [qml.expval(qml.PauliZ(i)) for i in range(2)]
 
     weight_shapes = {"weights": (6,)}
-    
-    # Explicitly set the initializer for complex weights
-    kernel_initializer = tf.keras.initializers.RandomUniform(minval=-0.05, maxval=0.05, seed=42)
-    
-    # Ensure complex64 type for the weights
-    q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2, kernel_initializer=kernel_initializer, dtype='complex64')
+    q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2, dtype='complex64')
     
     return q_layer(inputs)
 
