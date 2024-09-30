@@ -64,7 +64,7 @@ clear_existing_checkpoints(checkpoint_dir)
 # Load data
 image_data, text_data, quantum_real, quantum_imaginary, labels = load_data()
 
-# Convert real and imaginary parts to complex64
+# Combine real and imaginary parts to create complex64 quantum input
 quantum_input = tf.complex(quantum_real, quantum_imaginary)
 
 # Augment the image data
@@ -97,9 +97,9 @@ early_stopping = EarlyStopping(
 # Print the model summary to inspect the layers
 model.summary()
 
-# Train the model (pass the real and imaginary parts separately as inputs)
+# Train the model (passing quantum_input as a single complex64 tensor)
 history = model.fit(
-    [image_data, text_data, quantum_real, quantum_imaginary],  # Pass real and imaginary parts of quantum data separately
+    [image_data, text_data, quantum_input],  # Pass quantum_input (complex64) instead of separate real and imaginary parts
     labels,
     validation_split=0.2,  # Use 20% of the data for validation
     epochs=EPOCHS,
@@ -119,5 +119,5 @@ model.save(final_model_path)
 logging.info(f"Model saved to {final_model_path}")
 
 # Evaluate the model
-loss, accuracy = model.evaluate([image_data, text_data, quantum_real, quantum_imaginary], labels)
+loss, accuracy = model.evaluate([image_data, text_data, quantum_input], labels)
 logging.info(f"Final Loss: {loss}, Final Accuracy: {accuracy}")
