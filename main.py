@@ -24,11 +24,12 @@ data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
 
 # Efficient data handling (dummy data for example purposes)
 def load_data():
+    # Replace with actual data loading
     num_samples = 1000
-    image_data = np.random.random((num_samples, 32, 32, 3)).astype(np.float32)
+    image_data = np.random.random((num_samples, 32, 32, 3))
     text_data = np.random.randint(10000, size=(num_samples, 100))
-    quantum_data = np.random.random((num_samples, 2)).astype(np.complex64)  # Complex64 for quantum data
-    labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes for labels
+    quantum_data = np.random.random((num_samples, 2)) + 1j * np.random.random((num_samples, 2))  # Complex quantum data
+    labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
     
     return image_data, text_data, quantum_data, labels
 
