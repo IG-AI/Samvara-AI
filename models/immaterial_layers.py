@@ -1,56 +1,45 @@
 # models/immaterial_layers.py
 
-import pennylane as qml
-from pennylane import numpy as np
 import tensorflow as tf
-from tensorflow.keras.layers import Dense, Input, Concatenate
-from tensorflow.keras.models import Model
+from tensorflow.keras import layers
 
-def quantum_circuit(inputs, weights):
-    """Quantum circuit for processing intuition and higher reasoning."""
-    qml.templates.AngleEmbedding(inputs, wires=range(2))
-    qml.templates.StronglyEntanglingLayers(weights, wires=range(2))
-    return [qml.expval(qml.PauliZ(i)) for i in range(2)]
+# CustomQuantumLayer as defined earlier
+class CustomQuantumLayer(tf.keras.layers.Layer):
+    def __init__(self, units=2, **kwargs):
+        super(CustomQuantumLayer, self).__init__(**kwargs)
+        self.units = units
 
+    def build(self, input_shape):
+        # Initialize real and imaginary parts for the complex weights
+        self.real_kernel = self.add_weight(shape=(input_shape[-1], self.units),
+                                           initializer='glorot_uniform',
+                                           trainable=True,
+                                           dtype=tf.float32)
+
+        self.imaginary_kernel = self.add_weight(shape=(input_shape[-1], self.units),
+                                                initializer='glorot_uniform',
+                                                trainable=True,
+                                                dtype=tf.float32)
+
+    def call(self, inputs):
+        # Split the input into real and imaginary parts if needed
+        real_part = tf.math.real(inputs)
+        imaginary_part = tf.math.imag(inputs)
+
+        # Perform matrix multiplication with the real and imaginary kernels
+        real_output = tf.matmul(real_part, self.real_kernel)
+        imaginary_output = tf.matmul(imaginary_part, self.imaginary_kernel)
+
+        # Combine the real and imaginary outputs into complex numbers again
+        output = tf.complex(real_output, imaginary_output)
+        return output
+
+# Build the immaterial model
 def build_immaterial_model():
-    # Quantum input (for higher-order thinking and intuition)
-    quantum_input = Input(shape=(2,), name='quantum_input', dtype='complex64')
+    quantum_input = layers.Input(shape=(2,), dtype=tf.complex64, name="quantum_input")
+    
+    # Replace the quantum layer with the custom quantum layer
+    q_layer = CustomQuantumLayer(units=2, name="custom_quantum_layer")(quantum_input)
 
-    # Define weight shapes for the quantum circuit
-    weight_shapes = {"weights": (1, 2, 3)}
-
-    # Quantum Layer: simulates higher-order reasoning (Layer 7: Intuition)
-    q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2, dtype='complex64', name='quantum_layer')
-
-    # Output of the quantum layer is intuition-based information
-    quantum_output = q_layer(quantum_input)
-
-    # Emotional intelligence layer (Layer 8: Emotional Intelligence)
-    emotional_intelligence = Dense(64, activation='relu', name='emotional_intelligence')(quantum_output)
-
-    # Subconscious patterns (Layer 9: Subconscious Patterns) 
-    # Captures long-term dependencies and influences material layers
-    subconscious_patterns = Dense(64, activation='relu', name='subconscious_patterns')(emotional_intelligence)
-
-    # Abstract thought (Layer 10: Abstract Thought)
-    abstract_thought = Dense(64, activation='relu', name='abstract_thought')(subconscious_patterns)
-
-    # Collective consciousness (Layer 11: Collective Consciousness)
-    collective_consciousness = Dense(64, activation='relu', name='collective_consciousness')(abstract_thought)
-
-    # Ethical awareness (Layer 12: Ethical/Spiritual Awareness)
-    ethical_awareness = Dense(64, activation='relu', name='ethical_awareness')(collective_consciousness)
-
-    # Transpersonal awareness (Layer 13: Transpersonal Awareness)
-    transpersonal_awareness = Dense(64, activation='relu', name='transpersonal_awareness')(ethical_awareness)
-
-    # Cosmic awareness (Layer 14: Cosmic Awareness)
-    cosmic_awareness = Dense(64, activation='relu', name='cosmic_awareness')(transpersonal_awareness)
-
-    # Unity consciousness (Layer 15: Unity Consciousness)
-    unity_consciousness = Dense(64, activation='relu', name='unity_consciousness')(cosmic_awareness)
-
-    # Define the immaterial model
-    immaterial_model = Model(inputs=[quantum_input], outputs=unity_consciousness, name='immaterial_model')
-
-    return immaterial_model
+    model = tf.keras.Model(inputs=quantum_input, outputs=q_layer)
+    return model
