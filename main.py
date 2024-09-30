@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from samvara_model import build_samvara_model
+from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import os
 
