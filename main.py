@@ -101,11 +101,15 @@ history = model.fit(
 
 # Manually save the model's weights after training
 final_weights_path = f"{checkpoint_dir}/final_model_weights.h5"
+if os.path.exists(final_weights_path):
+    os.remove(final_weights_path)
 model.save_weights(final_weights_path)
 print(f"Weights saved to {final_weights_path}")
 
 # Manually save the entire model after training
 final_model_path = f"{checkpoint_dir}/final_model"
+if os.path.exists(final_model_path):
+    os.rmdir(final_model_path)
 model.save(final_model_path)
 print(f"Model saved to {final_model_path}")
 
