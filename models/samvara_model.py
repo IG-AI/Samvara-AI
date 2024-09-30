@@ -1,10 +1,15 @@
 # models/samvara_model.py
 
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Concatenate
+from tensorflow.keras.layers import Input, Dense, Concatenate, Layer
 from tensorflow.keras.models import Model
 from models.material_layers import build_material_model
 from models.immaterial_layers import build_immaterial_model
+
+# Custom layer to handle real part extraction
+class RealPartLayer(Layer):
+    def call(self, inputs):
+        return tf.math.real(inputs)
 
 def build_samvara_model():
     # Material model (image and text inputs)
@@ -14,19 +19,18 @@ def build_samvara_model():
 
     material_output = material_model([image_input, text_input])
 
-    # Immaterial model (real and imaginary quantum inputs)
+    # Immaterial model (quantum input)
     real_input = Input(shape=(2,), name='real_input')
     imaginary_input = Input(shape=(2,), name='imaginary_input')
     immaterial_model = build_immaterial_model()
 
     immaterial_output = immaterial_model([real_input, imaginary_input])
 
-    # Convert immaterial_output to float32 to match material_output type
-    immaterial_output_real = tf.math.real(immaterial_output)
-    immaterial_output_float = tf.cast(immaterial_output_real, dtype=tf.float32)
+    # Use a custom layer to extract the real part of the complex immaterial output
+    immaterial_output_real = RealPartLayer()(immaterial_output)
 
-    # Concatenate material and immaterial outputs
-    combined_output = Concatenate()([material_output, immaterial_output_float])
+    # Concatenate material and immaterial outputs (now both float32)
+    combined_output = Concatenate()([material_output, immaterial_output_real])
 
     # Final dense layers for classification
     output = Dense(10, activation='softmax')(combined_output)
