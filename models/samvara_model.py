@@ -8,7 +8,7 @@ from models.immaterial_layers import build_immaterial_model
 
 class RealPartLayer(Layer):
     def call(self, inputs):
-        return inputs  # Removed real extraction; both parts are treated as float32.
+        return inputs  # Returning directly, no need to extract real part anymore.
 
 def build_samvara_model():
     # Material model (image and text inputs)
@@ -18,9 +18,18 @@ def build_samvara_model():
 
     material_output = material_model([image_input, text_input])
 
-    # Final dense layers for classification
-    output = Dense(10, activation='softmax')(material_output)
+    # Immaterial model (quantum input)
+    real_input = Input(shape=(2,), name='real_input')
+    imaginary_input = Input(shape=(2,), name='imaginary_input')
+    immaterial_model = build_immaterial_model()
 
-    model = Model(inputs=[image_input, text_input], outputs=output)
+    immaterial_output = immaterial_model([real_input, imaginary_input])
+
+    # Concatenate material and immaterial outputs
+    combined_output = Concatenate()([material_output, immaterial_output])
+
+    # Final dense layer for classification
+    output = Dense(10, activation='softmax')(combined_output)
+
+    model = Model(inputs=[image_input, text_input, real_input, imaginary_input], outputs=output)
     return model
-    
