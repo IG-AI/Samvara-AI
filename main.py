@@ -18,7 +18,7 @@ tf.random.set_seed(42)
 # Hyperparameters
 BATCH_SIZE = 32
 EPOCHS = 50
-LEARNING_RATE = 0.001
+LEARNING_RATE = 0.00001  # Reduce learning rate to a much smaller value
 
 # Data Augmentation for Image Data
 data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
@@ -36,6 +36,12 @@ def load_data():
     quantum_data_real = np.random.random((num_samples, 2)).astype('float32')  # Real part
     quantum_data_imaginary = np.random.random((num_samples, 2)).astype('float32')  # Imaginary part
     labels = np.random.randint(10, size=(num_samples, 10)).astype('int64')  # Assuming 10 classes
+    
+    # Normalize the image and quantum data to 0-1 range
+    image_data = image_data / 255.0  # Normalize image data
+    quantum_data_real = quantum_data_real / np.max(quantum_data_real)  # Normalize quantum data
+    quantum_data_imaginary = quantum_data_imaginary / np.max(quantum_data_imaginary)
+
     return image_data, text_data, quantum_data_real, quantum_data_imaginary, labels
 
 # Set up directories and ensure proper permissions
