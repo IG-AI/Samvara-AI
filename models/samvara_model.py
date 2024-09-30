@@ -17,9 +17,9 @@ def build_samvara_model():
     quantum_input = Input(shape=(2,), name='quantum_input')
     immaterial_model = build_immaterial_model()
 
-    # Concatenate material and immaterial outputs
     immaterial_output = immaterial_model(quantum_input)
 
+    # Concatenate material and immaterial outputs
     combined_output = Concatenate()([material_output, immaterial_output])
 
     # Final dense layers for classification
