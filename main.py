@@ -34,10 +34,10 @@ data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
 # Efficient data handling (dummy data for example purposes)
 def load_data():
     num_samples = 1000
-    image_data = np.random.random((num_samples, 32, 32, 3))
-    text_data = np.random.randint(10000, size=(num_samples, 100))
-    quantum_data = np.random.random((num_samples, 2))  # Quantum data with real and imaginary parts
-    labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
+    image_data = np.random.random((num_samples, 32, 32, 3)).astype('float32')
+    text_data = np.random.randint(10000, size=(num_samples, 100)).astype('int64')
+    quantum_data = np.random.random((num_samples, 2)).astype('float32')  # Quantum data as float32
+    labels = np.random.randint(10, size=(num_samples, 10)).astype('int64')  # Assuming 10 classes
     return image_data, text_data, quantum_data, labels
 
 # Function to set directory permissions and create the directory if it doesn't exist
