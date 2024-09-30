@@ -5,8 +5,10 @@ import numpy as np
 import tensorflow as tf
 from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+import h5py
 import time
 import uuid
+import stat
 import logging
 
 # Set logging configuration
@@ -34,24 +36,23 @@ def load_data():
     num_samples = 1000
     image_data = np.random.random((num_samples, 32, 32, 3))
     text_data = np.random.randint(10000, size=(num_samples, 100))
-    
-    # Separate real and imaginary parts for quantum data
-    quantum_data_real = np.random.random((num_samples, 2))
-    quantum_data_imaginary = np.random.random((num_samples, 2))
-    
+    quantum_real_data = np.random.random((num_samples, 2))
+    quantum_imaginary_data = np.random.random((num_samples, 2))
     labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
-    return image_data, text_data, quantum_data_real, quantum_data_imaginary, labels
+    return image_data, text_data, quantum_real_data, quantum_imaginary_data, labels
 
 # Function to set directory permissions and create the directory if it doesn't exist
 def ensure_directory_exists_and_writable(dir_path):
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
+    # Make sure directory is writable
+    os.chmod(dir_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # Set 777 permissions
     logging.info(f"Directory {dir_path} exists and is writable.")
 
 # Clear old checkpoints to prevent conflicts
 def clear_existing_checkpoints(checkpoint_dir):
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".ckpt"):
+        if file.endswith(".h5"):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
@@ -61,7 +62,7 @@ ensure_directory_exists_and_writable(checkpoint_dir)
 clear_existing_checkpoints(checkpoint_dir)
 
 # Load data
-image_data, text_data, quantum_data_real, quantum_data_imaginary, labels = load_data()
+image_data, text_data, quantum_real_data, quantum_imaginary_data, labels = load_data()
 
 # Augment the image data
 train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZE)
@@ -95,7 +96,7 @@ model.summary()
 
 # Train the model
 history = model.fit(
-    [image_data, text_data, quantum_data_real, quantum_data_imaginary],  # Real and imaginary parts separated
+    [image_data, text_data, quantum_real_data, quantum_imaginary_data],
     labels,
     validation_split=0.2,  # Use 20% of the data for validation
     epochs=EPOCHS,
@@ -115,5 +116,5 @@ model.save(final_model_path)
 logging.info(f"Model saved to {final_model_path}")
 
 # Evaluate the model
-loss, accuracy = model.evaluate([image_data, text_data, quantum_data_real, quantum_data_imaginary], labels)
+loss, accuracy = model.evaluate([image_data, text_data, quantum_real_data, quantum_imaginary_data], labels)
 logging.info(f"Final Loss: {loss}, Final Accuracy: {accuracy}")
