@@ -63,6 +63,10 @@ clear_existing_checkpoints(checkpoint_dir)
 # Load data
 image_data, text_data, quantum_data, labels = load_data()
 
+# Split quantum data into real and imaginary parts (for simplicity, we simulate them)
+real_part = quantum_data  # Placeholder for real part of quantum data
+imaginary_part = quantum_data  # Placeholder for imaginary part of quantum data
+
 # Augment the image data
 train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZE)
 
@@ -95,7 +99,7 @@ model.summary()
 
 # Train the model (pass the real and imaginary parts separately as inputs)
 history = model.fit(
-    [image_data, text_data, quantum_data],  # Pass real-valued inputs
+    [image_data, text_data, real_part, imaginary_part],  # Pass real and imaginary parts of quantum data separately
     labels,
     validation_split=0.2,  # Use 20% of the data for validation
     epochs=EPOCHS,
@@ -115,5 +119,5 @@ model.save(final_model_path)
 logging.info(f"Model saved to {final_model_path}")
 
 # Evaluate the model
-loss, accuracy = model.evaluate([image_data, text_data, quantum_data], labels)
+loss, accuracy = model.evaluate([image_data, text_data, real_part, imaginary_part], labels)
 logging.info(f"Final Loss: {loss}, Final Accuracy: {accuracy}")
