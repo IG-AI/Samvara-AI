@@ -36,7 +36,7 @@ def load_data():
     num_samples = 1000
     image_data = np.random.random((num_samples, 32, 32, 3))
     text_data = np.random.randint(10000, size=(num_samples, 100))
-    quantum_data = np.random.random((num_samples, 2))
+    quantum_data = np.random.random((num_samples, 2)) + 1j * np.random.random((num_samples, 2))  # Quantum data as complex numbers
     labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
     return image_data, text_data, quantum_data, labels
 
@@ -51,7 +51,7 @@ def ensure_directory_exists_and_writable(dir_path):
 # Clear old checkpoints to prevent conflicts
 def clear_existing_checkpoints(checkpoint_dir):
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".h5"):
+        if file.endswith(".h5") or file.endswith(".ckpt"):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
@@ -62,6 +62,10 @@ clear_existing_checkpoints(checkpoint_dir)
 
 # Load data
 image_data, text_data, quantum_data, labels = load_data()
+
+# Split quantum data into real and imaginary parts
+quantum_data_real = np.real(quantum_data)
+quantum_data_imaginary = np.imag(quantum_data)
 
 # Augment the image data
 train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZE)
@@ -95,7 +99,7 @@ model.summary()
 
 # Train the model
 history = model.fit(
-    [image_data, text_data, quantum_data],
+    [image_data, text_data, quantum_data_real, quantum_data_imaginary],  # Provide real and imaginary inputs separately
     labels,
     validation_split=0.2,  # Use 20% of the data for validation
     epochs=EPOCHS,
@@ -115,5 +119,5 @@ model.save(final_model_path)
 logging.info(f"Model saved to {final_model_path}")
 
 # Evaluate the model
-loss, accuracy = model.evaluate([image_data, text_data, quantum_data], labels)
+loss, accuracy = model.evaluate([image_data, text_data, quantum_data_real, quantum_data_imaginary], labels)
 logging.info(f"Final Loss: {loss}, Final Accuracy: {accuracy}")
