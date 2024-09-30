@@ -5,7 +5,6 @@ import numpy as np
 import tensorflow as tf
 from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-import h5py
 import logging
 
 # Set logging configuration
@@ -18,7 +17,7 @@ tf.random.set_seed(42)
 # Hyperparameters
 BATCH_SIZE = 32
 EPOCHS = 50
-LEARNING_RATE = 0.00001  # Reduce learning rate to a much smaller value
+LEARNING_RATE = 0.001  # Updated learning rate
 
 # Data Augmentation for Image Data
 data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
@@ -39,6 +38,7 @@ def load_data():
     
     # Normalize the image and quantum data to 0-1 range
     image_data = image_data / 255.0  # Normalize image data
+    text_data = text_data / 9999.0  # Normalize text data to [0,1]
     quantum_data_real = quantum_data_real / np.max(quantum_data_real)  # Normalize quantum data
     quantum_data_imaginary = quantum_data_imaginary / np.max(quantum_data_imaginary)
 
@@ -71,7 +71,7 @@ train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZ
 # Build the Samvara model
 model = build_samvara_model()
 
-# Compile the model with a lower learning rate for better optimization
+# Compile the model with a better learning rate
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -99,7 +99,7 @@ logging.info(f"Quantum data (real) shape: {quantum_real.shape}, Quantum data (im
 
 # Train the model
 history = model.fit(
-    [image_data, text_data],  # Pass only the image_data and text_data
+    [image_data, text_data, quantum_real, quantum_imaginary],
     labels,
     validation_split=0.2,
     epochs=EPOCHS,
