@@ -3,7 +3,6 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import pennylane as qml
-from pennylane import numpy as np
 
 # Quantum layer using PennyLane
 def quantum_layer(inputs):
@@ -18,47 +17,33 @@ def quantum_layer(inputs):
         qml.CNOT(wires=[0, 1])
         qml.Rot(weights[0], weights[1], weights[2], wires=0)
         qml.Rot(weights[3], weights[4], weights[5], wires=1)
-        return [qml.expval(qml.PauliZ(i)) for i in range(2)]
+        return [qml.expval(qml.PauliZ(i)) + 1j * qml.expval(qml.PauliX(i)) for i in range(2)]
 
-    # Define the weight shapes
     weight_shapes = {"weights": (6,)}
+    q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes, output_dim=2, dtype=tf.complex64)
 
-    # Using KerasLayer without kernel_initializer
-    q_layer = qml.qnn.KerasLayer(quantum_circuit, weight_shapes=weight_shapes, output_dim=2)
-    
     return q_layer(inputs)
 
 def build_immaterial_model():
-    # Inputs: quantum data and material model output
-    quantum_input = layers.Input(shape=(2,), dtype=tf.complex128, name='quantum_input')
-    material_output = layers.Input(shape=(128,), dtype=tf.float32, name='material_output')  # Shape from the material model
+    quantum_input = layers.Input(shape=(2,), dtype=tf.complex64, name='quantum_input')
+    material_output = layers.Input(shape=(128,), name='material_output')
 
-    # Quantum layer processing
     quantum_output = quantum_layer(quantum_input)
 
-    # Explicitly separate the real and imaginary parts
+    # Split real and imaginary parts
     real_part = tf.math.real(quantum_output)
     imaginary_part = tf.math.imag(quantum_output)
 
-    # Process the real part
+    # Process real and imaginary parts separately
     real_dense = layers.Dense(64, activation='relu')(real_part)
-    
-    # Process the imaginary part
     imag_dense = layers.Dense(64, activation='relu')(imaginary_part)
 
-    # Combine real and imaginary processed outputs
+    # Combine real and imaginary parts
     combined_quantum = layers.Concatenate()([real_dense, imag_dense])
 
-    # Further dense layers for immaterial processing
     immaterial_dense = layers.Dense(128, activation='relu')(combined_quantum)
-
-    # Combine immaterial with material output
     combined = layers.Concatenate()([material_output, immaterial_dense])
 
-    # Final dense layer to produce the immaterial output
     output = layers.Dense(128, activation='relu')(combined)
 
-    # Build the immaterial model
-    model = models.Model(inputs=[quantum_input, material_output], outputs=output)
-
-    return model
+    return models.Model(inputs=[quantum_input, material_output], outputs=output)
