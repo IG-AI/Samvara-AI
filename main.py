@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
-from models.samvara_model import build_samvara_model
+from samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from utils.gpu_monitor import start_gpu_monitoring  # Import the GPU monitoring utility
+import os
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -12,6 +12,7 @@ tf.random.set_seed(42)
 BATCH_SIZE = 32
 EPOCHS = 50
 LEARNING_RATE = 0.001
+CHECKPOINT_PATH = 'best_model.h5'  # Path to the checkpoint file
 
 # Data Augmentation for Image Data
 data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
@@ -41,9 +42,14 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
+# Check if a checkpoint exists and load it
+if os.path.exists(CHECKPOINT_PATH):
+    print("Loading the last checkpoint to resume training...")
+    model.load_weights(CHECKPOINT_PATH)
+
 # Model Checkpoint: Save the best model during training
 checkpoint = ModelCheckpoint(
-    filepath='best_model.h5',
+    filepath=CHECKPOINT_PATH,
     save_best_only=True,
     monitor='val_loss',
     verbose=1
@@ -57,22 +63,16 @@ early_stopping = EarlyStopping(
     verbose=1
 )
 
-# Start GPU monitoring (runs in a separate thread)
-gpu_monitor_thread = start_gpu_monitoring(interval=60)
-
-# Train the model
+# Train the model (continue from checkpoint if loaded)
 history = model.fit(
     [image_data, text_data, quantum_data],
     labels,
-    validation_split=0.2,  # Use 20% of the data for validation
+    validation_split=0.2,
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[checkpoint, early_stopping],
     verbose=1
 )
-
-# After training, join the monitoring thread
-gpu_monitor_thread.join()
 
 # Evaluate the model
 loss, accuracy = model.evaluate([image_data, text_data, quantum_data], labels)
