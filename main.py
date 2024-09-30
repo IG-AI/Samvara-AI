@@ -52,25 +52,20 @@ checkpoint_dir = "checkpoints/"
 if not os.path.exists(checkpoint_dir):
     os.makedirs(checkpoint_dir)
 
-# Clear out any existing files in the checkpoint directory (to avoid conflicts)
-for file in os.listdir(checkpoint_dir):
-    os.remove(os.path.join(checkpoint_dir, file))
-
 # Create a unique filename for checkpoints using timestamp
 def generate_unique_filename(base_name='best_model'):
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    return f"{checkpoint_dir}/{base_name}_{timestamp}"
+    return f"{checkpoint_dir}/{base_name}_{timestamp}.h5"
 
-# Model Checkpoint: Save the best model during training with TensorFlow format
+# Model Checkpoint: Save the best model during training with unique filenames
 checkpoint_path = generate_unique_filename()
 
 checkpoint = ModelCheckpoint(
-    filepath=checkpoint_path,  # No '.h5', we use TensorFlow format
+    filepath=checkpoint_path,
     save_best_only=True,
     monitor='val_loss',
     verbose=1,
-    save_weights_only=False,  # Save the entire model (not just weights)
-    save_format='tf'  # Use TensorFlow's native format
+    save_weights_only=True  # Save only weights
 )
 
 # Early Stopping: Stop training if validation loss doesn't improve after 5 epochs
@@ -94,6 +89,16 @@ history = model.fit(
     callbacks=[checkpoint, early_stopping],
     verbose=1
 )
+
+# Manually save the model's weights after training
+final_weights_path = f"{checkpoint_dir}/final_model_weights.h5"
+model.save_weights(final_weights_path)
+print(f"Weights saved to {final_weights_path}")
+
+# Manually save the entire model after training
+final_model_path = f"{checkpoint_dir}/final_model"
+model.save(final_model_path)
+print(f"Model saved to {final_model_path}")
 
 # Evaluate the model
 loss, accuracy = model.evaluate([image_data, text_data, quantum_data], labels)
