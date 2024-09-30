@@ -6,6 +6,7 @@ import tensorflow as tf
 from models.samvara_model import build_samvara_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import h5py
+import time
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -48,29 +49,19 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Define a function to safely remove an existing file
-def safely_remove_file(filepath):
-    if os.path.exists(filepath):
-        os.remove(filepath)
-
-# Create unique filename for checkpoints
-checkpoint_path = 'best_model_{epoch:02d}-{val_loss:.2f}.h5'
-
-# Safely remove the file if it exists before saving
-def safe_model_checkpoint(filepath):
-    # If file exists, remove it before saving new one
-    safely_remove_file(filepath)
-
-    # Return the ModelCheckpoint callback with the updated path
-    return ModelCheckpoint(
-        filepath=filepath,
-        save_best_only=True,
-        monitor='val_loss',
-        verbose=1
-    )
+# Generate a unique filename using the current time
+def generate_unique_filename(base_name='best_model'):
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    return f"{base_name}_{timestamp}.h5"
 
 # Model Checkpoint: Save the best model during training with unique filenames
-checkpoint = safe_model_checkpoint(checkpoint_path)
+checkpoint_path = generate_unique_filename()
+checkpoint = ModelCheckpoint(
+    filepath=checkpoint_path,
+    save_best_only=True,
+    monitor='val_loss',
+    verbose=1
+)
 
 # Early Stopping: Stop training if validation loss doesn't improve after 5 epochs
 early_stopping = EarlyStopping(
