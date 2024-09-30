@@ -55,12 +55,6 @@ def clear_existing_checkpoints(checkpoint_dir):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
-# Generate a unique filename for checkpoints and final models
-def generate_unique_filename(base_name='best_model', checkpoint_dir="checkpoints"):
-    timestamp = time.strftime("%Y%m%d-%H%M%S")
-    unique_id = str(uuid.uuid4())
-    return f"{checkpoint_dir}/{base_name}_{timestamp}_{unique_id}.ckpt"
-
 # Set up directories and ensure proper permissions
 checkpoint_dir = "checkpoints/"
 ensure_directory_exists_and_writable(checkpoint_dir)
@@ -79,18 +73,9 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Check if the checkpoint path is None
-checkpoint_path = generate_unique_filename(base_name="best_model", checkpoint_dir=checkpoint_dir)
-
-if checkpoint_path is None:
-    raise ValueError("The checkpoint path is None. Please ensure the filename is correctly generated.")
-
-# Log the checkpoint path to ensure it's correct
-logging.info(f"Checkpoint path: {checkpoint_path}")
-
-# Model Checkpoint: Save the best model during training with unique filenames
+# Model Checkpoint: Save the best model during training with auto-generated filenames
 checkpoint = ModelCheckpoint(
-    filepath=checkpoint_path,
+    filepath=os.path.join(checkpoint_dir, 'best_model_{epoch:02d}.ckpt'),
     save_best_only=True,
     monitor='val_loss',
     verbose=1,
@@ -108,7 +93,7 @@ early_stopping = EarlyStopping(
 # Print the model summary to inspect the layers
 model.summary()
 
-# Train the model with unique checkpoint filenames
+# Train the model
 history = model.fit(
     [image_data, text_data, quantum_data],
     labels,
@@ -120,12 +105,12 @@ history = model.fit(
 )
 
 # Manually save the model's weights after training
-final_weights_path = generate_unique_filename(base_name='final_model_weights', checkpoint_dir=checkpoint_dir)
+final_weights_path = os.path.join(checkpoint_dir, 'final_model_weights.ckpt')
 model.save_weights(final_weights_path)
 logging.info(f"Weights saved to {final_weights_path}")
 
 # Manually save the entire model after training
-final_model_path = generate_unique_filename(base_name='final_model', checkpoint_dir=checkpoint_dir)
+final_model_path = os.path.join(checkpoint_dir, 'final_model.h5')
 model.save(final_model_path)
 logging.info(f"Model saved to {final_model_path}")
 
