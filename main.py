@@ -1,5 +1,6 @@
 # main.py
 
+import os
 import numpy as np
 import tensorflow as tf
 from models.samvara_model import build_samvara_model
@@ -46,9 +47,13 @@ model = build_samvara_model()
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
+# Before saving the model, remove the previous file if it exists
+if os.path.exists('best_model.h5'):
+    os.remove('best_model.h5')
+
 # Model Checkpoint: Save the best model during training
 checkpoint = ModelCheckpoint(
-    filepath='best_model.h5',
+    filepath='best_model_{epoch:02d}-{val_loss:.2f}.h5',  # Creates unique filenames for each epoch
     save_best_only=True,
     monitor='val_loss',
     verbose=1
