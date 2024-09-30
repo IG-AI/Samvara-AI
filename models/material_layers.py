@@ -1,7 +1,7 @@
 # models/material_layers.py
 
 import tensorflow as tf
-from tensorflow.keras.layers import Dense, Input, Conv2D, Flatten, LSTM, Embedding, Concatenate, Dropout
+from tensorflow.keras.layers import Dense, Input, Conv2D, Flatten, LSTM, Embedding, Concatenate
 from tensorflow.keras.models import Model
 
 def build_material_model():
