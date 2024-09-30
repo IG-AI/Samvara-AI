@@ -36,7 +36,7 @@ def load_data():
     num_samples = 1000
     image_data = np.random.random((num_samples, 32, 32, 3))
     text_data = np.random.randint(10000, size=(num_samples, 100))
-    quantum_data = np.random.random((num_samples, 2))
+    quantum_data = np.random.random((num_samples, 2))  # Quantum data with real and imaginary parts
     labels = np.random.randint(10, size=(num_samples, 10))  # Assuming 10 classes
     return image_data, text_data, quantum_data, labels
 
@@ -62,6 +62,10 @@ clear_existing_checkpoints(checkpoint_dir)
 
 # Load data
 image_data, text_data, quantum_data, labels = load_data()
+
+# Split quantum data into real and imaginary parts
+real_data = np.real(quantum_data)
+imaginary_data = np.imag(quantum_data)
 
 # Augment the image data
 train_data_gen = data_augmentation.flow(image_data, labels, batch_size=BATCH_SIZE)
@@ -93,9 +97,9 @@ early_stopping = EarlyStopping(
 # Print the model summary to inspect the layers
 model.summary()
 
-# Train the model
+# Train the model (pass the real and imaginary parts separately as inputs)
 history = model.fit(
-    [image_data, text_data, quantum_data],
+    [image_data, text_data, real_data, imaginary_data],  # Pass real and imaginary parts separately
     labels,
     validation_split=0.2,  # Use 20% of the data for validation
     epochs=EPOCHS,
@@ -115,5 +119,5 @@ model.save(final_model_path)
 logging.info(f"Model saved to {final_model_path}")
 
 # Evaluate the model
-loss, accuracy = model.evaluate([image_data, text_data, quantum_data], labels)
+loss, accuracy = model.evaluate([image_data, text_data, real_data, imaginary_data], labels)
 logging.info(f"Final Loss: {loss}, Final Accuracy: {accuracy}")
