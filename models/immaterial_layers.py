@@ -33,12 +33,18 @@ class CustomQuantumLayer(tf.keras.layers.Layer):
         output = tf.complex(real_output, imaginary_output)
         return output
 
+    def compute_output_shape(self, input_shape):
+        # Define the output shape
+        return (input_shape[0][0], self.units)
+
 # Build the immaterial model
 def build_immaterial_model():
     real_input = layers.Input(shape=(2,), dtype=tf.float32, name="real_input")
     imaginary_input = layers.Input(shape=(2,), dtype=tf.float32, name="imaginary_input")
 
+    # Apply the custom quantum layer
     q_layer = CustomQuantumLayer(units=2, name="custom_quantum_layer")([real_input, imaginary_input])
 
     model = tf.keras.Model(inputs=[real_input, imaginary_input], outputs=q_layer)
     return model
+    
