@@ -19,8 +19,12 @@ def build_samvara_model():
 
     immaterial_output = immaterial_model(quantum_input)
 
-    # Concatenate material and immaterial outputs
-    combined_output = Concatenate()([material_output, immaterial_output])
+    # Convert immaterial_output to float32 to match material_output type
+    immaterial_output_real = tf.math.real(immaterial_output)
+    immaterial_output_float = tf.cast(immaterial_output_real, dtype=tf.float32)
+
+    # Concatenate material and immaterial outputs (now both float32)
+    combined_output = Concatenate()([material_output, immaterial_output_float])
 
     # Final dense layers for classification
     output = Dense(10, activation='softmax')(combined_output)
