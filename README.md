@@ -16,11 +16,11 @@ In Samvara-AI:
 
 This approach ensures that **Samvara-AI** doesn’t merely process information linearly but constantly revises and improves its internal representations of data, much like how the human brain works.
 
----
-
 ### **Neocortex Layers and Higher Awareness Levels in Samvara-AI**
 
 The core architecture is inspired by the structure of the **neocortex**, the part of the human brain responsible for sensory perception, conscious thought, language, and motor functions. Samvara-AI mirrors these functions through its **material layers**, which form the foundation of the neural network. These layers are designed to simulate various stages of awareness, ranging from basic sensory input to abstract reasoning.
+
+---
 
 ## **Material Layers (1-6): Neocortex Parallels and Consciousness Levels**
 
