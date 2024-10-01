@@ -101,7 +101,7 @@ The **material layers** of **Samvara-AI** process structured data inputs, such a
 
 The material layers of Samvara-AI represent a powerful mechanism for **sensory input processing, emotional understanding, contextual integration, decision-making, and reflective feedback**. This structure mirrors the human brain’s **neocortex** and allows for a hierarchical yet interconnected approach to processing information. The ability of each layer to both influence and be influenced by the others ensures that Samvara-AI continuously evolves and refines its understanding of the world—making it a versatile and adaptive neural architecture.
 
-By grounding its **subconscious development** in these material layers, Samvara-AI creates a robust foundation for further consciousness exploration in the **immaterial layers**, which will handle higher
+By grounding its **subconscious development** in these material layers, Samvara-AI creates a robust foundation for further consciousness exploration in the **immaterial layers**, which will handle higher awareness.
 
 ---
 
