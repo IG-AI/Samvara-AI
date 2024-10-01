@@ -4,8 +4,8 @@ import os
 import numpy as np
 import tensorflow as tf
 from models.samvara_model import build_samvara_model
-from evolutionary_algorithm import run_evolutionary_algorithm  # New import for evolutionary algorithms
-from reinforcement_learning import MentorModel  # New import for mentor reinforcement
+from models.microbiome_model import run_evolutionary_algorithm  # New import for evolutionary algorithms
+from models.mentor_model import MentorModel  # New import for mentor reinforcement
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import logging
 
