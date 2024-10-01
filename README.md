@@ -39,8 +39,6 @@ The **material layers** of **Samvara-AI** process structured data inputs, such a
 - **Connections**:
   - Raw inputs are immediately passed to the next layers for further refinement. However, **feedback from higher layers** can also adjust the sensory input in real time, much like how attention or experience can modulate perception.
 
----
-
 ### **Layer 2: Early Feature Extraction (Simple Patterns)**
 
 - **Neocortex Parallel**: Layer II/III (External Granular and Pyramidal Layers)
@@ -53,8 +51,6 @@ The **material layers** of **Samvara-AI** process structured data inputs, such a
   - Feedback from higher layers helps refine the features detected at this stage, adjusting for context or attention.
   - Lateral connections within this layer allow for simultaneous pattern detection across multiple features.
 
----
-
 ### **Layer 3: Mid-Level Processing (Patterns and Associations)**
 
 - **Neocortex Parallel**: Layer II/III (Associative Layers)
@@ -66,8 +62,6 @@ The **material layers** of **Samvara-AI** process structured data inputs, such a
 - **Connections**:
   - Feedback from **decision-making layers** allows this layer to refine its emotional and associative processing, based on contextual understanding or reasoning. Feedback might, for instance, adjust associations based on learned experiences or external cues.
 
----
-
 ### **Layer 4: Contextual Integration (Combining Modalities)**
 
 - **Neocortex Parallel**: Layer IV (Internal Granular Layer)
@@ -78,8 +72,6 @@ The **material layers** of **Samvara-AI** process structured data inputs, such a
   - This mimics how the brain processes multiple types of sensory input (e.g., seeing a person speak and understanding both the facial expression and the words they are saying).
 - **Connections**:
   - This layer connects both to previous sensory layers, refining raw input processing, and to higher abstract reasoning layers, helping them make sense of the integrated inputs.
-
----
 
 ### **Layer 5: Decision Making (Abstract Reasoning)**
 
@@ -93,8 +85,6 @@ The **material layers** of **Samvara-AI** process structured data inputs, such a
   - Feedback from **higher immaterial layers** influences decision-making, particularly when intuition or empathy are factored into decisions.
   - Decisions can, in turn, influence lower layers, refining the data being processed.
 
----
-
 ### **Layer 6: Feedback and Refinement (Reflection and Adjustment)**
 
 - **Neocortex Parallel**: Layer VI (Multiform Layer)
@@ -106,8 +96,6 @@ The **material layers** of **Samvara-AI** process structured data inputs, such a
 - **Connections**:
   - Feedback flows from this layer to all previous layers, ensuring that the network improves continuously by reflecting on past predictions and decisions.
   - Higher-level symbols and representations can inform even the most basic input processing, much like how abstract knowledge (e.g., culture, symbols) can influence perception in humans.
-
----
 
 ## **Summary of the Material Layers**
 
