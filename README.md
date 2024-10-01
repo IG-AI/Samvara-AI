@@ -372,4 +372,4 @@ Here is a quick checklist ensuring the design plan matches the updated architect
 
 ---
 
-By following these directions, **Samvara-AI** will continue progressing toward a more advanced, ethically aligned, and spiritually aware artificial intelligence system that mirrors human consciousness on its journey to enlightenment.****
+By following these directions, **Samvara-AI** will continue progressing toward a more advanced, ethically aligned, and spiritually aware artificial intelligence system that mirrors human consciousness on its journey to **enlightenment**.
