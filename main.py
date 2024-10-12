@@ -10,6 +10,7 @@ from models.mentor_model import MentorModel
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import logging
 from utils.helpers import safe_remove, safe_remove_hdf5_dataset, ensure_directory_exists_and_writable, clear_existing_checkpoints
+from utils.gpu_monitor import start_gpu_monitoring
 
 # Set logging configuration
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +23,10 @@ tf.random.set_seed(42)
 BATCH_SIZE = 32
 EPOCHS = 50
 LEARNING_RATE = 0.001
+
+# Start GPU monitoring in a separate thread
+logging.info("Starting GPU monitoring...")
+gpu_monitor_thread = start_gpu_monitoring(interval=60)
 
 # Data Augmentation for Image Data
 data_augmentation = tf.keras.preprocessing.image.ImageDataGenerator(
