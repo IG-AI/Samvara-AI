@@ -87,8 +87,8 @@ material_history = material_model.fit(
     verbose=1
 )
 
-# Save weights for material layers (Subconscious)
-material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.keras'))
+# Save weights for material layers (Subconscious) with the correct .weights.h5 extension
+material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.weights.h5'))
 
 # Step 2: Evolve Microbiome Model (Evolutionary Algorithm)
 logging.info("Running Evolutionary Algorithm to simulate Microbiome Influence")
