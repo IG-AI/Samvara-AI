@@ -236,34 +236,72 @@ To run **Samvara-AI**, you will need the following:
 
 ---
 
-### Installation
+## Installation
 
-1. **Clone the Repository**:
-   Clone the Samvara-AI repository from GitHub to your local machine:
+### 1. Clone the Repository:
+Clone the Samvara-AI repository from GitHub to your local machine:
+
+```bash
+git clone https://github.com/IG-AI/Samvara-AI.git
+cd Samvara-AI
+```
+
+### 2. Install Dependencies:
+
+#### **Option 1: Install Dependencies Locally**
+If you prefer to run Samvara-AI directly on your local machine (without Docker), install the required dependencies listed in `requirements.txt`. These include TensorFlow, PennyLane, and other supporting libraries:
+
+```bash
+pip install -r requirements.txt
+```
+
+#### **Option 2: Use Docker with GPU Support**
+For a streamlined setup and GPU utilization (e.g., NVIDIA T4), you can use Docker to create a containerized environment. Follow the steps below:
+
+1. **Ensure NVIDIA Container Toolkit is Installed on the Host:**
+
+   To run the container with GPU support, you need the NVIDIA Container Toolkit on your host machine:
+
    ```bash
-   git clone https://github.com/IG-AI/Samvara-AI.git
-   cd Samvara-AI
+   sudo apt-get install -y nvidia-container-toolkit
+   sudo systemctl restart docker
    ```
 
-2. **Install Dependencies**:
-   Install the required dependencies listed in `requirements.txt`. These include TensorFlow, PennyLane, and other supporting libraries:
+2. **Build the Docker Image**:
+   Build the Docker image, which includes all necessary dependencies such as TensorFlow with GPU support:
+
    ```bash
-   pip install -r requirements.txt
+   docker build -t samvara-ai-gpu .
    ```
 
-3. **Run the Model**:
-   You can run the model in two ways, either using a `screen` session (to keep the process running even after disconnecting) or running the main script directly.
+3. **Run the Docker Container with GPU Access**:
+   Start the container with access to the GPU:
 
-   **To run the model in a screen session**:
    ```bash
-   ./scripts/run_in_screen.sh
+   docker run --gpus all -it samvara-ai-gpu
    ```
 
-   **Or simply run**:
-   ```bash
-   python main.py
-   ```
+   This ensures that Samvara-AI utilizes the NVIDIA T4 GPU for optimal performance.
 
+### 3. Run the Model:
+
+You can run the model in two ways, either using a screen session (to keep the process running even after disconnecting) or running the main script directly.
+
+#### **Option 1: Run the Model in a Screen Session:**
+
+To run the model in a screen session and keep the process running even after disconnecting:
+
+```bash
+./scripts/run_in_screen.sh
+```
+
+#### **Option 2: Run the Model Directly:**
+
+Alternatively, you can run the model directly:
+
+```bash
+python main.py
+```
 ---
 
 ## Explanation of Files and Directories
