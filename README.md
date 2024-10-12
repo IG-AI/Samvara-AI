@@ -281,7 +281,7 @@ For a streamlined setup and GPU utilization (e.g., NVIDIA T4), you can use Docke
    docker run --gpus all -it samvara-ai-gpu
    ```
 
-   This ensures that Samvara-AI utilizes the NVIDIA T4 GPU for optimal performance.
+   This ensures that Samvara-AI utilizes the GPU(s) for optimal performance.
 
 ### 3. Run the Model:
 
