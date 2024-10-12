@@ -280,7 +280,8 @@ docker build -t samvara-ai-gpu .
 Start the container with access to the GPU:
 
 ```bash
-docker run --gpus all -it samvara-ai-gpu
+docker run --gpus all -v $(pwd):/app -it samvara-ai-gpu
+
 ```
 
 This ensures that Samvara-AI utilizes the GPU(s) for optimal performance.
