@@ -54,7 +54,7 @@ def ensure_directory_exists_and_writable(dir_path):
 
 def clear_existing_checkpoints(checkpoint_dir):
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".h5") or file.endswith(".weights.h5"):
+        if file.endswith(".keras"):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
@@ -83,12 +83,12 @@ material_history = material_model.fit(
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'material_best_model.weights.h5'), save_best_only=True)],
+               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'material_best_model.keras'), save_best_only=True)],  # Change made here
     verbose=1
 )
 
 # Save weights for material layers (Subconscious)
-material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.weights.h5'))
+material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.keras'))  # Ensure correct extension
 
 # Step 2: Evolve Microbiome Model (Evolutionary Algorithm)
 logging.info("Running Evolutionary Algorithm to simulate Microbiome Influence")
@@ -117,10 +117,10 @@ full_history = samvara_model.fit(
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[mentor, EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'samvara_best_model.weights.h5'), save_best_only=True)],
+               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'samvara_best_model.keras'), save_best_only=True)],  # Change made here
     verbose=1
 )
 
 # Save the final model
-samvara_model.save_weights(os.path.join(checkpoint_dir, 'samvara_final_model_weights.weights.h5'))
+samvara_model.save_weights(os.path.join(checkpoint_dir, 'samvara_final_model_weights.keras'))  # Ensure correct extension
 logging.info(f"Final Samvara Model weights saved.")
