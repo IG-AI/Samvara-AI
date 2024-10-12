@@ -66,6 +66,14 @@ def safe_remove(filepath):
         os.remove(filepath)
         logging.info(f"Removed existing file: {filepath}")
 
+def safe_remove_hdf5_dataset(filepath, dataset_name):
+    """Ensure that existing datasets are removed in HDF5 files before creating a new one."""
+    if os.path.exists(filepath):
+        with h5py.File(filepath, 'a') as h5file:
+            if dataset_name in h5file:
+                del h5file[dataset_name]
+                logging.info(f"Removed existing dataset: {dataset_name} from {filepath}")
+
 # Directory for checkpoints
 checkpoint_dir = "checkpoints/"
 ensure_directory_exists_and_writable(checkpoint_dir)
@@ -91,7 +99,7 @@ timestamp = int(time.time())
 material_best_model_path = os.path.join(checkpoint_dir, f'material_best_model_{timestamp}.keras')
 material_final_weights_path = os.path.join(checkpoint_dir, f'material_final_model_weights_{timestamp}.weights.h5')
 
-# Ensure pre-existing files are safely removed
+# Ensure pre-existing files or datasets are safely removed
 safe_remove(material_best_model_path)
 safe_remove(material_final_weights_path)
 
@@ -127,7 +135,7 @@ samvara_model.compile(optimizer=full_optimizer, loss='categorical_crossentropy',
 samvara_best_model_path = os.path.join(checkpoint_dir, f'samvara_best_model_{timestamp}.keras')
 samvara_final_model_path = os.path.join(checkpoint_dir, f'samvara_final_model_{timestamp}.keras')
 
-# Ensure pre-existing files are safely removed
+# Ensure pre-existing files or datasets are safely removed
 safe_remove(samvara_best_model_path)
 safe_remove(samvara_final_model_path)
 
@@ -143,6 +151,9 @@ full_history = samvara_model.fit(
                ModelCheckpoint(filepath=samvara_best_model_path, save_best_only=True)],
     verbose=1
 )
+
+# Ensure no dataset conflicts in the HDF5 file before saving the final model
+safe_remove_hdf5_dataset(samvara_final_model_path, 'model_weights')
 
 # Save the full model (architecture + weights) using .keras
 samvara_model.save(samvara_final_model_path)
