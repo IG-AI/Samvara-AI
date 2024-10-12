@@ -19,13 +19,16 @@ RUN curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && 
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set up Python environment
-RUN pip install --upgrade pip
+# Set up Python environment and virtualenv
+RUN pip install --upgrade pip virtualenv
 
-# Install project-specific dependencies
+# Create a virtual environment
+RUN virtualenv /app/venv
+
+# Activate the virtual environment and install project-specific dependencies
 COPY requirements.txt /app/requirements.txt
 WORKDIR /app
-RUN pip install -r requirements.txt
+RUN /bin/bash -c "source /app/venv/bin/activate && pip install --no-cache-dir --root-user-action=ignore -r requirements.txt"
 
 # Copy the Samvara-AI project files
 COPY . /app
@@ -33,5 +36,5 @@ COPY . /app
 # Expose necessary ports
 EXPOSE 8888 6006
 
-# Command to run the Samvara-AI training script
-CMD ["python", "main.py"]
+# Command to run the Samvara-AI training script within the virtual environment
+CMD ["/bin/bash", "-c", "source /app/venv/bin/activate && python main.py"]
