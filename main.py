@@ -76,7 +76,7 @@ material_model = build_samvara_model(include_immaterial=False)
 material_optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 material_model.compile(optimizer=material_optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Train the material model
+# Use .h5 for saving weights only in ModelCheckpoint
 material_history = material_model.fit(
     [image_data, text_data], labels,
     validation_split=0.2,
@@ -87,8 +87,8 @@ material_history = material_model.fit(
     verbose=1
 )
 
-# Save weights for material layers
-material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.weights.h5'))  # Updated extension
+# Save only the weights with .h5 extension
+material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.h5'))
 
 # Step 2: Evolve Microbiome Model (Evolutionary Algorithm)
 logging.info("Running Evolutionary Algorithm to simulate Microbiome Influence")
@@ -107,17 +107,16 @@ samvara_model.compile(optimizer=full_optimizer, loss='categorical_crossentropy',
 # Introduce mentor-based reinforcement learning
 mentor = MentorModel()
 
-# Train the full model (conscious + evolved microbiome data)
 full_history = samvara_model.fit(
     [image_data, text_data, quantum_real, quantum_imaginary], labels,
     validation_split=0.2,
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[mentor, EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'samvara_best_model.weights.h5'), save_best_only=True)],  # Updated extension
+               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'samvara_best_model.keras'), save_best_only=True)],
     verbose=1
 )
 
-# Save the final model
-samvara_model.save_weights(os.path.join(checkpoint_dir, 'samvara_final_model_weights.weights.h5'))  # Updated extension
+# Save the full model (architecture + weights) using .keras
+samvara_model.save(os.path.join(checkpoint_dir, 'samvara_final_model.keras'))
 logging.info(f"Final Samvara Model weights saved.")
