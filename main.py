@@ -54,7 +54,7 @@ def ensure_directory_exists_and_writable(dir_path):
 
 def clear_existing_checkpoints(checkpoint_dir):
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".h5"):
+        if file.endswith(".weights.h5") or file.endswith(".keras"):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
@@ -76,7 +76,7 @@ material_model = build_samvara_model(include_immaterial=False)
 material_optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 material_model.compile(optimizer=material_optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Use .h5 for saving weights only in ModelCheckpoint
+# Use .weights.h5 for saving weights only in ModelCheckpoint
 material_history = material_model.fit(
     [image_data, text_data], labels,
     validation_split=0.2,
@@ -87,8 +87,8 @@ material_history = material_model.fit(
     verbose=1
 )
 
-# Save only the weights with .h5 extension
-material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.h5'))
+# Save only the weights with .weights.h5 extension
+material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.weights.h5'))
 
 # Step 2: Evolve Microbiome Model (Evolutionary Algorithm)
 logging.info("Running Evolutionary Algorithm to simulate Microbiome Influence")
