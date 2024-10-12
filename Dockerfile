@@ -1,5 +1,5 @@
-# Base image with CUDA and cuDNN pre-installed (TensorFlow GPU version)
-FROM tensorflow/tensorflow:2.10.0-gpu
+# Base image with TensorFlow 2.12.1 and GPU support
+FROM tensorflow/tensorflow:2.12.1-gpu
 
 # Install necessary libraries and tools
 RUN apt-get update && apt-get install -y \
@@ -19,16 +19,13 @@ RUN curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && 
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set up Python environment and virtualenv
-RUN pip install --upgrade pip virtualenv
+# Set up Python environment
+RUN pip install --upgrade pip
 
-# Create a virtual environment
-RUN virtualenv /app/venv
-
-# Activate the virtual environment and install project-specific dependencies
+# Install project-specific dependencies
 COPY requirements.txt /app/requirements.txt
 WORKDIR /app
-RUN /bin/bash -c "source /app/venv/bin/activate && pip install --no-cache-dir --root-user-action=ignore -r requirements.txt"
+RUN pip install -r requirements.txt
 
 # Copy the Samvara-AI project files
 COPY . /app
@@ -36,5 +33,5 @@ COPY . /app
 # Expose necessary ports
 EXPOSE 8888 6006
 
-# Command to run the Samvara-AI training script within the virtual environment
-CMD ["/bin/bash", "-c", "source /app/venv/bin/activate && python main.py"]
+# Command to run the Samvara-AI training script
+CMD ["python", "main.py"]
