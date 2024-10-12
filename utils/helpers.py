@@ -8,14 +8,6 @@ from sklearn.model_selection import train_test_split
 import h5py
 import os
 
-# Function to safely remove existing datasets in HDF5 files
-def safe_remove_hdf5_dataset(filepath, dataset_name):
-    if os.path.exists(filepath):
-        with h5py.File(filepath, 'a') as h5file:
-            if dataset_name in h5file:
-                del h5file[dataset_name]
-                print(f"Removed existing dataset: {dataset_name} from {filepath}")
-
 # Function to preprocess image data
 def preprocess_images(image_data, image_size=(32, 32)):
     # Resize images to the target size
