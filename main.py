@@ -54,7 +54,7 @@ def ensure_directory_exists_and_writable(dir_path):
 
 def clear_existing_checkpoints(checkpoint_dir):
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".weights.h5"):
+        if file.endswith(".h5"):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
@@ -83,7 +83,7 @@ material_history = material_model.fit(
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'material_best_model.weights.h5'), save_best_only=True)],
+               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'material_best_model.keras'), save_best_only=True)],
     verbose=1
 )
 
