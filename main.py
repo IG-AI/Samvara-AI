@@ -9,7 +9,7 @@ from models.microbiome_model import run_evolutionary_algorithm
 from models.mentor_model import MentorModel
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import logging
-import h5py
+from utils.helpers import safe_remove, safe_remove_hdf5_dataset, ensure_directory_exists_and_writable, clear_existing_checkpoints
 
 # Set logging configuration
 logging.basicConfig(level=logging.INFO)
@@ -47,32 +47,6 @@ def load_data():
     quantum_data_imaginary = quantum_data_imaginary / np.max(quantum_data_imaginary)
 
     return image_data, text_data, quantum_data_real, quantum_data_imaginary, labels
-
-# Directory setup and checkpoint management
-def ensure_directory_exists_and_writable(dir_path):
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
-    logging.info(f"Directory {dir_path} exists and is writable.")
-
-def clear_existing_checkpoints(checkpoint_dir):
-    for file in os.listdir(checkpoint_dir):
-        if file.endswith(".weights.h5") or file.endswith(".keras"):
-            os.remove(os.path.join(checkpoint_dir, file))
-    logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
-
-def safe_remove(filepath):
-    """Ensure that any pre-existing file is safely removed before creating a new one."""
-    if os.path.exists(filepath):
-        os.remove(filepath)
-        logging.info(f"Removed existing file: {filepath}")
-
-def safe_remove_hdf5_dataset(filepath, dataset_name):
-    """Ensure that existing datasets are removed in HDF5 files before creating a new one."""
-    if os.path.exists(filepath):
-        with h5py.File(filepath, 'a') as h5file:
-            if dataset_name in h5file:
-                del h5file[dataset_name]
-                logging.info(f"Removed existing dataset: {dataset_name} from {filepath}")
 
 # Directory for checkpoints
 checkpoint_dir = "checkpoints/"
