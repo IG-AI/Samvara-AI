@@ -1,5 +1,5 @@
-# Base image with TensorFlow 2.12.1 and GPU support
-FROM tensorflow/tensorflow:2.12.1-gpu
+# Base image with TensorFlow 2.12.0 and GPU support
+FROM tensorflow/tensorflow:2.12.0-gpu
 
 # Install necessary libraries and tools
 RUN apt-get update && apt-get install -y \
