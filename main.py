@@ -54,7 +54,7 @@ def ensure_directory_exists_and_writable(dir_path):
 
 def clear_existing_checkpoints(checkpoint_dir):
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".keras") or file.endswith(".weights.keras"):
+        if file.endswith(".h5") or file.endswith(".weights.h5"):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
@@ -72,9 +72,9 @@ logging.info("Starting Phase 1: Training Material Layers (Subconscious Developme
 # Build the Samvara model with material layers only
 material_model = build_samvara_model(include_immaterial=False)  # Train without immaterial layers
 
-# Compile the model
-optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
-material_model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+# Compile the material model with its own optimizer
+material_optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
+material_model.compile(optimizer=material_optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Train the material model
 material_history = material_model.fit(
@@ -83,11 +83,11 @@ material_history = material_model.fit(
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'material_best_model.keras'), save_best_only=True)],
+               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'material_best_model.weights.h5'), save_best_only=True)],
     verbose=1
 )
 
-# Save weights for material layers (Subconscious) with the correct .weights.h5 extension
+# Save weights for material layers (Subconscious)
 material_model.save_weights(os.path.join(checkpoint_dir, 'material_final_model_weights.weights.h5'))
 
 # Step 2: Evolve Microbiome Model (Evolutionary Algorithm)
@@ -101,8 +101,11 @@ logging.info("Starting Phase 2: Training Immaterial Layers (Conscious Developmen
 # Build the full Samvara model (material + immaterial layers)
 samvara_model = build_samvara_model(include_immaterial=True)
 
-# Compile the full model
-samvara_model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+# Create a new optimizer for the full model
+full_optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
+
+# Compile the full model with the new optimizer
+samvara_model.compile(optimizer=full_optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Introduce mentor-based reinforcement learning
 mentor = MentorModel()
@@ -114,10 +117,10 @@ full_history = samvara_model.fit(
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[mentor, EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'samvara_best_model.keras'), save_best_only=True)],
+               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, 'samvara_best_model.weights.h5'), save_best_only=True)],
     verbose=1
 )
 
 # Save the final model
-samvara_model.save_weights(os.path.join(checkpoint_dir, 'samvara_final_model_weights.keras'))
+samvara_model.save_weights(os.path.join(checkpoint_dir, 'samvara_final_model_weights.weights.h5'))
 logging.info(f"Final Samvara Model weights saved.")
