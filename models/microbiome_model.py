@@ -1,12 +1,12 @@
 # models/microbiome_model.py
 
 import numpy as np
-import logging  # Import logging module to track progress
+import logging
 
 # Simulate microbiome evolution and return evolved data
 def run_evolutionary_algorithm(image_data, text_data, quantum_real, quantum_imaginary, labels):
     """
-    Simulate microbiome evolution and return evolved data. 
+    Simulate microbiome evolution and return evolved data.
     The evolutionary algorithm affects physiological, emotional, and cognitive processes.
     """
     logging.info("Starting evolutionary algorithm for microbiome simulation.")
@@ -23,24 +23,25 @@ def run_evolutionary_algorithm(image_data, text_data, quantum_real, quantum_imag
     generations = 10
     for generation in range(generations):
         logging.info(f"Generation {generation+1}: Running microbiome evolution")
-        
-        # Apply mutation and crossover to image data (representing physiological changes)
+
+        # Apply mutation and crossover to image and text data (representing physiological and emotional changes)
         image_data = mutate_microbiomes(image_data, mutation_rate)
         text_data = crossover_microbiomes(text_data, crossover_rate)
 
         # Calculate new fitness scores based on feedback from quantum layers
-        fitness_scores = evaluate_fitness(quantum_real, quantum_imaginary, fitness_scores)
+        fitness_scores = evaluate_fitness(quantum_real, quantum_imaginary, fitness_scores[:len(image_data)])  # Update only for current individuals
 
         # Select best-performing individuals based on fitness threshold
         best_indices = np.where(fitness_scores > fitness_threshold)[0]
         logging.info(f"Generation {generation+1}: {len(best_indices)} individuals passed fitness threshold")
 
-        # Update datasets to keep only the best-performing individuals
+        # Update datasets and fitness scores to keep only the best-performing individuals
         image_data = image_data[best_indices]
         text_data = text_data[best_indices]
         quantum_real = quantum_real[best_indices]
         quantum_imaginary = quantum_imaginary[best_indices]
         labels = labels[best_indices]
+        fitness_scores = fitness_scores[best_indices]  # Update fitness scores for the remaining individuals
 
     logging.info("Evolutionary algorithm completed.")
     # Return the evolved data for further training
