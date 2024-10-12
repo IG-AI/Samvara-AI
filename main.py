@@ -8,7 +8,7 @@ from models.microbiome_model import run_evolutionary_algorithm
 from models.mentor_model import MentorModel
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import logging
-import time
+import h5py
 
 # Set logging configuration
 logging.basicConfig(level=logging.INFO)
@@ -59,6 +59,12 @@ def clear_existing_checkpoints(checkpoint_dir):
             os.remove(os.path.join(checkpoint_dir, file))
     logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
 
+def safe_remove(filepath):
+    """Ensure that any pre-existing file is safely removed before creating a new one."""
+    if os.path.exists(filepath):
+        os.remove(filepath)
+        logging.info(f"Removed existing file: {filepath}")
+
 # Directory for checkpoints
 checkpoint_dir = "checkpoints/"
 ensure_directory_exists_and_writable(checkpoint_dir)
@@ -80,19 +86,27 @@ material_model.compile(optimizer=material_optimizer, loss='categorical_crossentr
 # Use a timestamp for unique file names to avoid conflicts
 timestamp = int(time.time())
 
-# Use .keras for saving the best model during training
+# Define filepaths
+material_best_model_path = os.path.join(checkpoint_dir, f'material_best_model_{timestamp}.keras')
+material_final_weights_path = os.path.join(checkpoint_dir, f'material_final_model_weights_{timestamp}.weights.h5')
+
+# Ensure pre-existing files are safely removed
+safe_remove(material_best_model_path)
+safe_remove(material_final_weights_path)
+
+# Train and save the best model during training
 material_history = material_model.fit(
     [image_data, text_data], labels,
     validation_split=0.2,
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, f'material_best_model_{timestamp}.keras'), save_best_only=True)],
+               ModelCheckpoint(filepath=material_best_model_path, save_best_only=True)],
     verbose=1
 )
 
 # Save only the final weights with a .weights.h5 extension
-material_model.save_weights(os.path.join(checkpoint_dir, f'material_final_model_weights_{timestamp}.weights.h5'))
+material_model.save_weights(material_final_weights_path)
 
 # Step 2: Evolve Microbiome Model (Evolutionary Algorithm)
 logging.info("Running Evolutionary Algorithm to simulate Microbiome Influence")
@@ -108,6 +122,14 @@ samvara_model = build_samvara_model(include_immaterial=True)
 full_optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 samvara_model.compile(optimizer=full_optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
+# Define filepaths for the full model
+samvara_best_model_path = os.path.join(checkpoint_dir, f'samvara_best_model_{timestamp}.keras')
+samvara_final_model_path = os.path.join(checkpoint_dir, f'samvara_final_model_{timestamp}.keras')
+
+# Ensure pre-existing files are safely removed
+safe_remove(samvara_best_model_path)
+safe_remove(samvara_final_model_path)
+
 # Introduce mentor-based reinforcement learning
 mentor = MentorModel()
 
@@ -117,10 +139,10 @@ full_history = samvara_model.fit(
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
     callbacks=[mentor, EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-               ModelCheckpoint(filepath=os.path.join(checkpoint_dir, f'samvara_best_model_{timestamp}.keras'), save_best_only=True)],
+               ModelCheckpoint(filepath=samvara_best_model_path, save_best_only=True)],
     verbose=1
 )
 
 # Save the full model (architecture + weights) using .keras
-samvara_model.save(os.path.join(checkpoint_dir, f'samvara_final_model_{timestamp}.keras'))
+samvara_model.save(samvara_final_model_path)
 logging.info(f"Final Samvara Model saved.")
