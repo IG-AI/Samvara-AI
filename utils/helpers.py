@@ -60,20 +60,3 @@ def safe_remove_hdf5_dataset(filepath, dataset_name):
             if dataset_name in h5file:
                 del h5file[dataset_name]
                 logging.info(f"Removed existing dataset: {dataset_name} from {filepath}")
-
-# Function to log GPU usage
-def log_gpu_usage():
-    result = subprocess.run(['nvidia-smi'], stdout=subprocess.PIPE)
-    print(result.stdout.decode())
-
-# Function to monitor GPU usage during training
-def monitor_gpu_during_training(interval=60):
-    while True:
-        log_gpu_usage()
-        time.sleep(interval)
-
-# Function to start GPU monitoring in a separate thread
-def start_gpu_monitoring(interval=60):
-    gpu_monitor_thread = Thread(target=monitor_gpu_during_training, args=(interval,))
-    gpu_monitor_thread.start()
-    return gpu_monitor_thread
