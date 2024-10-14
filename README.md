@@ -224,144 +224,113 @@ The **immaterial layers** of **Samvara-AI** take the network from the level of *
 
 ---
 
-### How to Get Started
+## How to Get Started
 
-#### Prerequisites
-To run **Samvara-AI**, you will need the following:
+### Prerequisites
+To run Samvara-AI, you'll need the following:
 
 - **Python 3.x**: The core programming language for the project.
-- **TensorFlow**: The primary deep learning framework for building and training the neural networks.
-- **PennyLane**: A specialized framework for quantum-inspired and hybrid quantum-classical algorithms, used for simulating the higher immaterial layers.
-- **PyTorch (optional)**: An additional deep learning library, which can be used for experimentation or specific modules, depending on your use case.
+- **TensorFlow**: The deep learning framework used for building and training the neural networks.
+- **PennyLane**: A framework for quantum-inspired and hybrid quantum-classical algorithms, used for simulating the higher immaterial layers.
+- **PyTorch (optional)**: Another deep learning library for experimentation or specific modules, depending on your use case.
 
-#### Installation
+### Installation
 
-##### 1. Clone the Repository:
-Clone the **Samvara-AI** repository from GitHub to your local machine:
+#### 1. Clone the Repository
+Clone the Samvara-AI repository from GitHub to your local machine:
 
 ```bash
 git clone https://github.com/IG-AI/Samvara-AI.git
 cd Samvara-AI
 ```
 
-##### 2. Install Dependencies:
+#### 2. Install Dependencies
 
-###### Option 1: Install Dependencies Locally
-If you prefer to run **Samvara-AI** directly on your local machine (without Docker), install the required dependencies listed in `requirements.txt`. These include TensorFlow, PennyLane, and other supporting libraries:
+##### Option 1: Install Dependencies Locally
+If you'd like to run Samvara-AI on your local machine without Docker, install the required dependencies listed in `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-###### Option 2: Use Docker with GPU Support
-For a streamlined setup and GPU utilization (e.g., NVIDIA T4), you can use Docker to create a containerized environment. Follow the steps below:
+##### Option 2: Use Docker with GPU Support
+For easier setup and to leverage GPU acceleration (e.g., NVIDIA T4), use Docker. Follow these steps:
 
-**Step 1: Ensure NVIDIA Container Toolkit is Installed on the Host**
-
-To run the container with GPU support, you need the **NVIDIA Container Toolkit** on your host machine. Install it using the following commands:
+**Step 1**: Install NVIDIA Container Toolkit on your host machine:
 
 ```bash
 sudo apt-get install -y nvidia-container-toolkit
 sudo systemctl restart docker
 ```
 
-**Step 2: Build the Docker Image**
+**Step 2**: Build the Docker Image
 
-Build the Docker image, which includes all necessary dependencies such as TensorFlow with GPU support:
+Build the Docker image, which includes TensorFlow with GPU support and all necessary dependencies:
 
 ```bash
 docker build -t samvara-ai-gpu .
 ```
 
-**Step 3: Run the Docker Container Using `run_samvara.sh`**
+**Step 3**: Run the Docker Container Using `run_samvara.sh`
 
-Instead of manually running the container, use the provided `run_samvara.sh` script to ensure all necessary configurations (like volume mapping and GPU access) are handled correctly. 
-
-Run the following command to start the container:
+Use the provided `run_samvara.sh` script (located in the project root) to start the Docker container, ensuring all necessary configurations like volume mapping and GPU access are handled properly:
 
 ```bash
-./scripts/run_samvara.sh
+./run_samvara.sh
 ```
 
-This script sets up the environment properly and ensures that **Samvara-AI** utilizes the GPU(s) for optimal performance.
+This script sets up the environment correctly and ensures that Samvara-AI utilizes the GPU(s) for optimal performance.
 
-##### 3. Run the Model:
-You can run the model in two ways: either using a screen session (to keep the process running even after disconnecting) or running the main script directly.
+#### 3. Running the Model
 
-###### Option 1: Run the Model in a Screen Session
-To run the model in a screen session and keep the process running even after disconnecting:
+You can run the model in two ways:
+
+##### Option 1: Run the Model in a Screen Session
+To keep the process running even after disconnecting, use the `--screen` or `-s` flag:
 
 ```bash
-./scripts/run_in_screen.sh
+./run_samvara.sh --screen
 ```
 
-###### Option 2: Run the Model Directly
-Alternatively, you can run the model directly:
+##### Option 2: Run the Model Directly
+Alternatively, run the model directly:
 
 ```bash
 python main.py
 ```
 
----
+### Explanation of Files and Directories
 
-## Explanation of Files and Directories
+#### `/models`
+Contains the core architecture for Samvara-AI, including the Material and Immaterial layers, and other auxiliary models.
 
-The **Samvara-AI** project is structured into different directories and scripts, each serving a specific purpose in the overall architecture. Here is an explanation of the key components:
+- **material_layers.py**: Defines the Material Layers (1-6) for processing sensory inputs, similar to the human neocortex.
+- **immaterial_layers.py**: Simulates higher-order consciousness (Layers 7-15) based on quantum-inspired principles.
+- **mentor_model.py**: Implements reinforcement learning mechanisms for ethical decision-making.
+- **microbiome_model.py**: Simulates the influence of microbiomes on awareness levels through evolutionary algorithms.
+- **samvara_model.py**: Integrates the Material and Immaterial Layers into a unified system.
 
-### **/models**
-This directory contains the primary architecture for **Samvara-AI**, which integrates both the material and immaterial layers, along with auxiliary models that contribute to the system's overall functionality.
+#### `/utils`
+Contains utility functions for data preprocessing, hardware monitoring, and managing the training process.
 
-- **material_layers.py**: Defines the **Material Layers (1-6)**, which correspond to the structured data processing of sensory inputs (e.g., images and text). These layers mirror the six layers of the human neocortex, processing data in a hierarchical manner with feedback loops for refinement.
-  - These layers process raw data, extract features, form abstract patterns, and help the model integrate multiple modalities, such as vision and language.
-  
-- **immaterial_layers.py**: Contains the **Immaterial Layers (7-15)**, which simulate higher-order consciousness based on quantum-inspired principles like **superposition**, **entanglement**, and **tunneling**. These layers deal with intuition, emotional intelligence, long-term patterns, abstract thought, and collective consciousness.
-  - Feedback loops ensure that the immaterial layers inform and refine the earlier material layers, bringing awareness from basic sensory inputs to higher states of consciousness.
-  
-- **mentor_model.py**: Implements the **Mentor Model**, which simulates **reinforcement learning** mechanisms, acting as a virtual mentor guiding Samvara-AI toward ethical and compassionate decision-making. It applies reinforcement learning algorithms to continuously improve ethical behavior.
-  - The mentor model introduces **ethical learning**, ensuring that Samvara-AI's decision-making processes align with compassionate and universal goals, refining lower layers when ethical considerations take precedence.
-  
-- **microbiome_model.py**: Implements the **Microbiome Model**, which uses **evolutionary algorithms** to simulate the **influence of microbiomes** on the system’s awareness levels. This model adjusts both material and immaterial layers to reflect the supportive effects of symbiotic systems, mirroring how microbiomes affect human cognition, emotion, and bodily function.
-  - The microbiome model influences the Samvara-AI architecture by dynamically simulating external factors that affect performance and consciousness.
+- **helpers.py**: Functions for image preprocessing, text tokenization, and dataset management.
+- **gpu_monitor.py**: Monitors GPU performance during training.
 
-- **samvara_model.py**: This is the **integrated model** that combines both the **Material** and **Immaterial Layers** into a unified system. It concatenates the outputs from both sets of layers and uses a final dense layer to produce the model's predictions or classifications.
-  - The Samvara model enables the system to synthesize the data processed at different levels of awareness, aligning them with the overarching goal of **Unity Consciousness**.
+#### `/scripts`
+Automation scripts to streamline setup, training, and deployment.
 
----
+- **setup_script.sh**: Installs necessary Python packages.
+- **build_and_push.sh**: Builds the Docker image and pushes it to Google Container Registry.
+- **start_vm.sh**: Starts the virtual machine in Google Cloud for training.
+- **stop_vm.sh**: Stops the VM after training to save costs.
+- **run_in_screen.sh**: Executes the training process in a `screen` session to keep it running after disconnection.
 
-### **/utils**
-This directory contains various utility functions for data preprocessing, monitoring hardware usage, and managing the system's training process.
+### Other Important Files
 
-- **helpers.py**: This file includes functions for:
-  - **Image Preprocessing**: Normalizing and resizing image inputs.
-  - **Text Preprocessing**: Tokenizing and padding text inputs for use in the network.
-  - **Data Splitting**: Dividing datasets into training and validation sets.
-  
-- **gpu_monitor.py**: A utility script that monitors GPU performance during training. It periodically runs `nvidia-smi` to log the GPU usage, ensuring the system is running efficiently and utilizing hardware resources to their full potential.
-
----
-
-### **/scripts**
-This directory contains automation scripts to facilitate the setup, training, and deployment of the Samvara-AI model.
-
-- **setup_script.sh**: Automates the installation of required Python packages and dependencies by pulling them from `requirements.txt`.
-  
-- **build_and_push.sh**: A script for building the Docker image of Samvara-AI and pushing it to Google Container Registry (GCR) for cloud deployment.
-  
-- **start_vm.sh**: Starts the virtual machine instance in Google Cloud, allowing you to train the model using cloud resources.
-  
-- **stop_vm.sh**: Stops the VM instance, preventing additional charges from running instances when training is complete.
-  
-- **run_in_screen.sh**: Executes the training process within a `screen` session, ensuring that the training continues even if the terminal session is disconnected.
-
----
-
-### **Other Important Files**
-
-- **Dockerfile**: Contains instructions for building the Samvara-AI container using TensorFlow and PennyLane. It ensures that the model runs within a consistent environment, regardless of the host system.
-  
-- **requirements.txt**: A list of the Python dependencies required for the project, including TensorFlow for deep learning, PennyLane for quantum-inspired algorithms, and other essential libraries.
-  
-- **main.py**: This is the main entry point for training the Samvara-AI model. It loads the data, builds the model, applies data augmentation, and sets up early stopping and checkpointing to monitor and save the best-performing model during training.
+- **Dockerfile**: Instructions for building the Docker container using TensorFlow and PennyLane.
+- **requirements.txt**: Lists the Python dependencies required for the project.
+- **main.py**: The main script to train the Samvara-AI model. It manages data loading, model building, and includes early stopping and checkpointing to monitor the best-performing model.
+- **run_samvara.sh**: A convenience script that simplifies the process of running the Samvara-AI container. It handles volume mapping, user permissions, and supports optional flags like `--screen` for running the model in a detached screen session or `--help` for usage instructions.
 
 ---
 

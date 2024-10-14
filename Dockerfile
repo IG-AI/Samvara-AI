@@ -6,7 +6,7 @@ ARG USERNAME=samvarauser
 ARG USER_UID=1001
 ARG USER_GID=$USER_UID
 
-# Install necessary libraries and tools
+# Install necessary libraries and tools, including locales for UTF-8
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -16,7 +16,16 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     python3-pip \
     sudo \
+    locales \
     && rm -rf /var/lib/apt/lists/*
+
+# Set up locales for en_SE.UTF-8
+RUN locale-gen en_SE.UTF-8 && \
+    update-locale LANG=en_SE.UTF-8
+
+ENV LANG en_SE.UTF-8
+ENV LANGUAGE en_SE:en
+ENV LC_ALL en_SE.UTF-8
 
 # Create a new user and set appropriate permissions
 RUN groupadd --gid $USER_GID $USERNAME \
@@ -31,9 +40,12 @@ WORKDIR /home/$USERNAME/app
 # Set up Python environment
 RUN pip install --upgrade pip
 
-# Install project-specific dependencies
+# Install project-specific dependencies and ensure scikit-learn is installed
 COPY requirements.txt /home/$USERNAME/app/requirements.txt
 RUN pip install -r requirements.txt
+
+# Force install scikit-learn to avoid import issues
+RUN pip install scikit-learn
 
 # Ensure cuDNN file is present and install it
 COPY cudnn-linux-x64-v8.6.0.163.tgz /tmp/cudnn.tgz
