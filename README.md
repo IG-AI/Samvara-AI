@@ -224,50 +224,48 @@ The **immaterial layers** of **Samvara-AI** take the network from the level of *
 
 ---
 
-## How to Get Started
+### How to Get Started
 
-### Prerequisites
+#### Prerequisites
 To run **Samvara-AI**, you will need the following:
 
 - **Python 3.x**: The core programming language for the project.
 - **TensorFlow**: The primary deep learning framework for building and training the neural networks.
 - **PennyLane**: A specialized framework for quantum-inspired and hybrid quantum-classical algorithms, used for simulating the higher immaterial layers.
-- **PyTorch** (optional): An additional deep learning library, which can be used for experimentation or specific modules, depending on your use case.
+- **PyTorch (optional)**: An additional deep learning library, which can be used for experimentation or specific modules, depending on your use case.
 
----
+#### Installation
 
-## Installation
-
-### 1. Clone the Repository:
-Clone the Samvara-AI repository from GitHub to your local machine:
+##### 1. Clone the Repository:
+Clone the **Samvara-AI** repository from GitHub to your local machine:
 
 ```bash
 git clone https://github.com/IG-AI/Samvara-AI.git
 cd Samvara-AI
 ```
 
-### 2. Install Dependencies:
+##### 2. Install Dependencies:
 
-#### Option 1: Install Dependencies Locally
-If you prefer to run Samvara-AI directly on your local machine (without Docker), install the required dependencies listed in `requirements.txt`. These include TensorFlow, PennyLane, and other supporting libraries:
+###### Option 1: Install Dependencies Locally
+If you prefer to run **Samvara-AI** directly on your local machine (without Docker), install the required dependencies listed in `requirements.txt`. These include TensorFlow, PennyLane, and other supporting libraries:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-#### Option 2: Use Docker with GPU Support
+###### Option 2: Use Docker with GPU Support
 For a streamlined setup and GPU utilization (e.g., NVIDIA T4), you can use Docker to create a containerized environment. Follow the steps below:
 
-##### Step 1: Ensure NVIDIA Container Toolkit is Installed on the Host
+**Step 1: Ensure NVIDIA Container Toolkit is Installed on the Host**
 
-To run the container with GPU support, you need the NVIDIA Container Toolkit on your host machine. Install it using the following commands:
+To run the container with GPU support, you need the **NVIDIA Container Toolkit** on your host machine. Install it using the following commands:
 
 ```bash
 sudo apt-get install -y nvidia-container-toolkit
 sudo systemctl restart docker
 ```
 
-##### Step 2: Build the Docker Image
+**Step 2: Build the Docker Image**
 
 Build the Docker image, which includes all necessary dependencies such as TensorFlow with GPU support:
 
@@ -275,37 +273,36 @@ Build the Docker image, which includes all necessary dependencies such as Tensor
 docker build -t samvara-ai-gpu .
 ```
 
-##### Step 3: Run the Docker Container with GPU Access
+**Step 3: Run the Docker Container Using `run_samvara.sh`**
 
-Start the container with access to the GPU:
+Instead of manually running the container, use the provided `run_samvara.sh` script to ensure all necessary configurations (like volume mapping and GPU access) are handled correctly. 
+
+Run the following command to start the container:
 
 ```bash
-docker run --gpus all -it samvara-ai-gpu
-
+./scripts/run_samvara.sh
 ```
 
-This ensures that Samvara-AI utilizes the GPU(s) for optimal performance.
+This script sets up the environment properly and ensures that **Samvara-AI** utilizes the GPU(s) for optimal performance.
 
-### 3. Run the Model:
-You can run the model in two ways, either using a screen session (to keep the process running even after disconnecting) or running the main script directly.
+##### 3. Run the Model:
+You can run the model in two ways: either using a screen session (to keep the process running even after disconnecting) or running the main script directly.
 
-#### Option 1: Run the Model in a Screen Session
-
+###### Option 1: Run the Model in a Screen Session
 To run the model in a screen session and keep the process running even after disconnecting:
 
 ```bash
 ./scripts/run_in_screen.sh
 ```
 
-#### Option 2: Run the Model Directly
-
+###### Option 2: Run the Model Directly
 Alternatively, you can run the model directly:
 
 ```bash
 python main.py
 ```
 
---- 
+---
 
 ## Explanation of Files and Directories
 
