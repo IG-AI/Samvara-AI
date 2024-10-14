@@ -1,4 +1,4 @@
-k# Base image with CUDA and cuDNN pre-installed (TensorFlow GPU version)
+# Base image with CUDA and cuDNN pre-installed (TensorFlow GPU version)
 FROM tensorflow/tensorflow:2.10.0-gpu
 
 # Create a non-root user with sudo privileges
