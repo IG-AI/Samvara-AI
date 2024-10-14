@@ -35,6 +35,12 @@ RUN pip install --upgrade pip
 COPY requirements.txt /home/$USERNAME/app/requirements.txt
 RUN pip install -r requirements.txt
 
+# Ensure cuDNN file is present and install it
+COPY cudnn-linux-x64-v8.6.0.163.tgz /tmp/cudnn.tgz
+RUN tar -xzvf /tmp/cudnn.tgz -C /usr/local \
+    && rm /tmp/cudnn.tgz \
+    && sudo ldconfig
+
 # Set up directories with proper permissions
 RUN mkdir -p /home/$USERNAME/app/checkpoints \
     && chmod -R 775 /home/$USERNAME/app/checkpoints \
@@ -49,4 +55,3 @@ EXPOSE 8888 6006
 
 # Command to run the Samvara-AI training script
 CMD ["python", "main.py"]
-

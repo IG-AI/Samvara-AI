@@ -1,0 +1,9 @@
+version: '3'
+services:
+  samvara-ai:
+    image: samvara-ai-gpu
+    volumes:
+      - /path/to/volume:/container/path:rw
+    user: "${UID}:${GID}"
+    stdin_open: true
+    tty: true
