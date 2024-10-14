@@ -22,7 +22,7 @@ def monitor_gpu_during_training(interval=60):
         time.sleep(interval)
 
 # Function to start GPU monitoring in a separate thread
-def start_gpu_monitoring(interval=60):
+def start_gpu_monitoring(interval=300):
     """Start monitoring GPU usage in a separate thread."""
     gpu_monitor_thread = Thread(target=monitor_gpu_during_training, args=(interval,))
     gpu_monitor_thread.daemon = True  # Daemonize thread so it will not block the main program from exiting

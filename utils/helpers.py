@@ -27,13 +27,6 @@ def preprocess_text(text_data, max_words=10000, max_len=100):
 def split_data(inputs, labels, test_size=0.2):
     return train_test_split(inputs, labels, test_size=test_size, random_state=42)
 
-# Function to load data (placeholder, customize as needed)
-def load_data(image_path, text_path, label_path):
-    images = np.load(image_path)
-    texts = np.load(text_path)
-    labels = np.load(label_path)
-    return images, texts, labels
-
 # Ensure directory exists and is writable
 def ensure_directory_exists_and_writable(dir_path):
     if not os.path.exists(dir_path):
