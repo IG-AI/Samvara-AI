@@ -244,6 +244,90 @@ def check_gpu_memory_usage():
 # Add to debugger log
 print(check_gpu_memory_usage())
 
+def test_model_loading(model_name, model_class, model_path):
+    try:
+        model = model_class()
+        model.load_weights(model_path)
+        return f"Model {model_name} loaded successfully from {model_path}."
+    except Exception as e:
+        return f"Error loading model {model_name} from {model_path}: {str(e)}"
+
+# Test material and immaterial models
+from models.material_layers import build_material_model
+from models.immaterial_layers import build_immaterial_model
+
+# Add to debugger log
+print(test_model_loading("Material Layer Model", build_material_model, "/container_path/data/checkpoints/material_best_model_1728952467.keras"))
+print(test_model_loading("Immaterial Layer Model", build_immaterial_model, "/container_path/data/checkpoints/immaterial_best_model_1728952467.keras"))
+
+def test_model_inference(model_name, model_class, input_shapes):
+    try:
+        model = model_class()
+        random_inputs = [tf.random.normal(shape) for shape in input_shapes]
+        output = model(random_inputs)
+        return f"Inference on {model_name} succeeded with output shape {output.shape}."
+    except Exception as e:
+        return f"Error during inference on {model_name}: {str(e)}"
+
+# Test material and immaterial models
+print(test_model_inference("Material Layer Model", build_material_model, [(10, 3), (10, 3)]))
+print(test_model_inference("Immaterial Layer Model", build_immaterial_model, [(10, 2), (10, 2)]))
+
+def test_model_saving(model_name, model_class, save_path):
+    try:
+        model = model_class()
+        model.save_weights(save_path)
+        return f"Model {model_name} saved successfully to {save_path}."
+    except Exception as e:
+        return f"Error saving model {model_name} to {save_path}: {str(e)}"
+
+# Test material and immaterial model saving
+print(test_model_saving("Material Layer Model", build_material_model, "/container_path/data/checkpoints/material_test_save.keras"))
+print(test_model_saving("Immaterial Layer Model", build_immaterial_model, "/container_path/data/checkpoints/immaterial_test_save.keras"))
+
+def test_model_training_accuracy(model_name, model_class, input_shapes):
+    try:
+        model = model_class()
+        random_inputs = [tf.random.normal(shape) for shape in input_shapes]
+        random_labels = tf.random.normal([10, 2])
+        model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
+        history = model.fit(random_inputs, random_labels, epochs=2)
+        accuracy = history.history['accuracy'][-1]
+        return f"{model_name} training completed successfully with accuracy {accuracy}."
+    except Exception as e:
+        return f"Error during training for {model_name}: {str(e)}"
+
+# Test model training accuracy
+print(test_model_training_accuracy("Material Layer Model", build_material_model, [(10, 3), (10, 3)]))
+print(test_model_training_accuracy("Immaterial Layer Model", build_immaterial_model, [(10, 2), (10, 2)]))
+
+def test_model_config(model_name, model_class):
+    try:
+        model = model_class()
+        config = model.get_config()
+        model_summary = []
+        model.summary(print_fn=lambda x: model_summary.append(x))
+        return f"{model_name} config and summary:\nConfig: {config}\nSummary: {'\n'.join(model_summary)}"
+    except Exception as e:
+        return f"Error getting config or summary for {model_name}: {str(e)}"
+
+# Test model configuration
+print(test_model_config("Material Layer Model", build_material_model))
+print(test_model_config("Immaterial Layer Model", build_immaterial_model))
+
+def test_randomized_model_input(model_name, model_class):
+    try:
+        model = model_class()
+        random_input_shape = [(random.randint(5, 20), random.randint(2, 5)) for _ in range(2)]
+        random_inputs = [tf.random.normal(shape) for shape in random_input_shape]
+        output = model(random_inputs)
+        return f"{model_name} handled randomized input with output shape: {output.shape}."
+    except Exception as e:
+        return f"Error with randomized input on {model_name}: {str(e)}"
+
+# Test randomized input for models
+print(test_randomized_model_input("Material Layer Model", build_material_model))
+print(test_randomized_model_input("Immaterial Layer Model", build_immaterial_model))
 
 # Running all checks in one place
 def run_debugger():
@@ -294,6 +378,29 @@ def run_debugger():
     # Check GPU memory usage
     print(check_gpu_memory_usage())
 
+    # Test model loading for material and immaterial layers
+    print(test_model_loading("Material Layer Model", build_material_model, "/container_path/data/checkpoints/material_best_model_1728952467.keras"))
+    print(test_model_loading("Immaterial Layer Model", build_immaterial_model, "/container_path/data/checkpoints/immaterial_best_model_1728952467.keras"))
+
+    # Test model inference for material and immaterial layers
+    print(test_model_inference("Material Layer Model", build_material_model, [(10, 3), (10, 3)]))
+    print(test_model_inference("Immaterial Layer Model", build_immaterial_model, [(10, 2), (10, 2)]))
+
+    # Test model saving for material and immaterial layers
+    print(test_model_saving("Material Layer Model", build_material_model, "/container_path/data/checkpoints/material_test_save.keras"))
+    print(test_model_saving("Immaterial Layer Model", build_immaterial_model, "/container_path/data/checkpoints/immaterial_test_save.keras"))
+
+    # Test model accuracy during training
+    print(test_model_training_accuracy("Material Layer Model", build_material_model, [(10, 3), (10, 3)]))
+    print(test_model_training_accuracy("Immaterial Layer Model", build_immaterial_model, [(10, 2), (10, 2)]))
+
+    # Test model configuration and summary
+    print(test_model_config("Material Layer Model", build_material_model))
+    print(test_model_config("Immaterial Layer Model", build_immaterial_model))
+
+    # Test model with randomized input
+    print(test_randomized_model_input("Material Layer Model", build_material_model))
+    print(test_randomized_model_input("Immaterial Layer Model", build_immaterial_model))
 
 if __name__ == "__main__":
     run_debugger()
