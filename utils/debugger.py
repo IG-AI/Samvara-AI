@@ -9,32 +9,6 @@ from unittest.mock import patch, MagicMock
 from utils.helpers import safe_remove, safe_remove_hdf5_dataset, ensure_directory_exists_and_writable, clear_existing_checkpoints
 from utils.gpu_monitor import start_gpu_monitoring
 
-# Import functions from utils.debugger
-from utils.debugger import (
-    check_directory_permissions,
-    check_docker_container_exists,
-    check_docker_running,
-    check_python_packages,
-    check_gpu_availability,
-    check_docker_volume,
-    check_docker_image_integrity,
-    randomize_directory_permissions,
-    random_command_execution,
-    random_file_operations,
-    check_tensorflow_env,
-    test_random_http_request,
-    check_file_access,
-    random_tensorflow_operations,
-    check_docker_env_vars,
-    check_gpu_memory_usage,
-    test_model_loading,
-    test_model_inference,
-    test_model_saving,
-    test_model_training_accuracy,
-    test_model_config,
-    test_randomized_model_input
-)
-
 class TestDebuggerFunctions(unittest.TestCase):
 
     @patch("os.path.exists")
