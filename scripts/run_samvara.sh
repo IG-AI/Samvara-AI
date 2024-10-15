@@ -8,7 +8,7 @@ fi
 # Add SAMVARA_DIR to PYTHONPATH
 export PYTHONPATH="$SAMVARA_DIR:$PYTHONPATH"
 
-# Print PYTHONPATH for debugging
+# Print SAMVARA_DIR and PYTHONPATH for debugging
 echo "SAMVARA_DIR set to: $SAMVARA_DIR"
 echo "PYTHONPATH: $PYTHONPATH"
 
