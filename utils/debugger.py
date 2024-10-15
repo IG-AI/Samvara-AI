@@ -6,6 +6,8 @@ import random
 import tensorflow as tf
 import unittest
 from unittest.mock import patch, MagicMock
+from utils.helpers import safe_remove, safe_remove_hdf5_dataset, ensure_directory_exists_and_writable, clear_existing_checkpoints
+from utils.gpu_monitor import start_gpu_monitoring
 
 # Import functions from utils.debugger
 from utils.debugger import (
