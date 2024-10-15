@@ -1,5 +1,5 @@
 # Base image with CUDA and cuDNN pre-installed (TensorFlow GPU version)
-FROM tensorflow/tensorflow:2.10.0-gpu
+FROM tensorflow/tensorflow:2.10.0-gpu as base
 
 # Create a non-root user with sudo privileges
 ARG USERNAME=samvarauser
@@ -20,6 +20,9 @@ RUN apt-get update && apt-get install -y \
     apt-utils \
     python3-venv \
     && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip to the latest version
+RUN /usr/bin/python3 -m pip install --upgrade pip
 
 # Set up the locale to en_US.UTF-8
 RUN locale-gen en_US.UTF-8 && update-locale LANG=en_US.UTF-8
