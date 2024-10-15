@@ -36,6 +36,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Define Samvara-AI directory as environment variable
 ENV SAMVARA_DIR="/home/$USERNAME/Samvara-AI"
 ENV PATH="/home/$USERNAME/.local/bin:$PATH"
+ENV PYTHONPATH="$SAMVARA_DIR:$PYTHONPATH"  # Set PYTHONPATH here
 
 # Set working directory to Samvara-AI directory
 WORKDIR $SAMVARA_DIR
@@ -47,33 +48,23 @@ COPY requirements.txt $SAMVARA_DIR/requirements.txt
 USER $USERNAME
 
 # Set up Python environment and create a virtual environment
-RUN pip install --upgrade pip \
-    && python3 -m venv /home/$USERNAME/venv
+RUN python3 -m venv /home/$USERNAME/venv \
+    && /home/$USERNAME/venv/bin/pip install --upgrade pip \
+    && /home/$USERNAME/venv/bin/pip install -r $SAMVARA_DIR/requirements.txt
 
-# Activate the virtual environment and install dependencies
-RUN /bin/bash -c "source /home/$USERNAME/venv/bin/activate && pip install -r $SAMVARA_DIR/requirements.txt"
+# Switch back to root to copy scripts
+USER root
 
 # Copy the Samvara-AI project files
 COPY . $SAMVARA_DIR
-ENV PYTHONPATH="$SAMVARA_DIR:$PYTHONPATH"
 
-# Switch to root for setting permissions
-USER root
-RUN mkdir -p $SAMVARA_DIR/.storage/memory \
-    && mkdir -p $SAMVARA_DIR/.storage/cache \
-    && mkdir -p $SAMVARA_DIR/.storage/data \
-    && mkdir -p $SAMVARA_DIR/checkpoints \
-    && chmod -R 755 $SAMVARA_DIR/.storage \
-    && chmod -R 755 $SAMVARA_DIR/checkpoints
-
-# Make all scripts in the scripts directory executable
+# Copy all .sh scripts from the scripts directory and make them executable
 RUN chmod +x $SAMVARA_DIR/scripts/*.sh
 
-# Copy the alias setup script and make it executable
-COPY scripts/setup_alias.sh $SAMVARA_DIR/scripts/setup_alias.sh
-RUN chmod +x $SAMVARA_DIR/scripts/setup_alias.sh
+# Ensure user can write to SAMVARA_DIR
+RUN chown -R $USERNAME:$USERNAME $SAMVARA_DIR
 
-# Switch back to non-root user to run the alias setup script
+# Switch to non-root user to run the alias setup script
 USER $USERNAME
 RUN bash $SAMVARA_DIR/scripts/setup_alias.sh
 
