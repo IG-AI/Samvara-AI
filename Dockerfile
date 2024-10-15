@@ -66,7 +66,7 @@ RUN mkdir -p $SAMVARA_DIR/.storage/memory \
     && chmod -R 755 $SAMVARA_DIR/.storage \
     && chmod -R 755 $SAMVARA_DIR/checkpoints
 
-# Make all scripts executable under root
+# Make all scripts in the scripts directory executable
 RUN chmod +x $SAMVARA_DIR/scripts/*.sh
 
 # Copy the alias setup script and make it executable
