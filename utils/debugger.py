@@ -1,5 +1,3 @@
-# utils/debugger.py
-
 import os
 import subprocess
 import random
@@ -8,6 +6,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from utils.helpers import safe_remove, safe_remove_hdf5_dataset, ensure_directory_exists_and_writable, clear_existing_checkpoints
 from utils.gpu_monitor import start_gpu_monitoring
+from utils.parser import parse_arguments
 
 def some_function():
     from utils.debugger import check_directory_permissions
@@ -67,8 +66,8 @@ class TestDebuggerFunctions(unittest.TestCase):
         mock_run.side_effect = Exception("error")
         result = check_docker_running()
         self.assertEqual(result, "Error checking Docker service: error")
-
     @patch("subprocess.run")
+    
     def test_check_python_packages(self, mock_run):
         # Test case where package is installed
         mock_run.return_value.returncode = 0
@@ -350,5 +349,24 @@ class TestDebuggerFunctions(unittest.TestCase):
         result = test_randomized_model_input("Immaterial Layer Model", build_immaterial_model)
         self.assertIn("Error with randomized input on Immaterial Layer Model", result)
 
-if __name__ == '__main__':
-    unittest.main()
+def main():
+    # Parse the arguments using the parser from utils/parser.py
+    args = parse_arguments()
+
+    # Handle debug mode
+    if args.debug:
+        print("Running in debug mode")
+        # Add your debug-specific logic here
+
+    # Handle screen name
+    if args.screen:
+        print(f"Running on screen: {args.screen}")
+        # Add your screen-specific logic here
+
+    # If neither flag is provided, run normally
+    if not args.debug and not args.screen:
+        print("Running Samvara-AI normally")
+        # Add your normal execution logic here
+
+if __name__ == "__main__":
+    main()

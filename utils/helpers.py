@@ -1,55 +1,36 @@
-# utils/helpers.py
-
-import numpy as np
-import tensorflow as tf
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from sklearn.model_selection import train_test_split
-import h5py
 import os
-import logging
+import shutil
+import h5py
 
-# Function to preprocess image data
-def preprocess_images(image_data, image_size=(32, 32)):
-    # Resize images to the target size
-    image_data = np.array([tf.image.resize(image, image_size) for image in image_data])
-    return image_data / 255.0  # Normalize images to [0,1]
+def safe_remove(file_path):
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return f"{file_path} removed successfully."
+        return f"{file_path} does not exist."
+    except Exception as e:
+        return f"Error removing {file_path}: {str(e)}"
 
-# Function to preprocess text data
-def preprocess_text(text_data, max_words=10000, max_len=100):
-    tokenizer = Tokenizer(num_words=max_words)
-    tokenizer.fit_on_texts(text_data)
-    sequences = tokenizer.texts_to_sequences(text_data)
-    padded_sequences = pad_sequences(sequences, maxlen=max_len)
-    return padded_sequences
+def safe_remove_hdf5_dataset(file_path, dataset_name):
+    try:
+        with h5py.File(file_path, "a") as f:
+            if dataset_name in f:
+                del f[dataset_name]
+                return f"Dataset {dataset_name} removed from {file_path}."
+            return f"Dataset {dataset_name} not found in {file_path}."
+    except Exception as e:
+        return f"Error removing dataset {dataset_name}: {str(e)}"
 
-# Function to split dataset into train and test sets
-def split_data(inputs, labels, test_size=0.2):
-    return train_test_split(inputs, labels, test_size=test_size, random_state=42)
+def ensure_directory_exists_and_writable(directory_path):
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
+    if not os.access(directory_path, os.W_OK):
+        return f"Permission denied: {directory_path} is not writable."
+    return f"Directory {directory_path} exists and is writable."
 
-# Ensure directory exists and is writable
-def ensure_directory_exists_and_writable(dir_path):
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
-    logging.info(f"Directory {dir_path} exists and is writable.")
-
-# Clear existing checkpoints
 def clear_existing_checkpoints(checkpoint_dir):
+    if not os.path.exists(checkpoint_dir):
+        os.makedirs(checkpoint_dir)
     for file in os.listdir(checkpoint_dir):
-        if file.endswith(".weights.h5") or file.endswith(".keras"):
-            os.remove(os.path.join(checkpoint_dir, file))
-    logging.info(f"Cleared existing checkpoints in {checkpoint_dir}.")
-
-# Ensure that any pre-existing file is safely removed before creating a new one
-def safe_remove(filepath):
-    if os.path.exists(filepath):
-        os.remove(filepath)
-        logging.info(f"Removed existing file: {filepath}")
-
-# Ensure that existing datasets are removed in HDF5 files before creating a new one
-def safe_remove_hdf5_dataset(filepath, dataset_name):
-    if os.path.exists(filepath):
-        with h5py.File(filepath, 'a') as h5file:
-            if dataset_name in h5file:
-                del h5file[dataset_name]
-                logging.info(f"Removed existing dataset: {dataset_name} from {filepath}")
+        os.remove(os.path.join(checkpoint_dir, file))
+    return f"Cleared existing checkpoints in {checkpoint_dir}."

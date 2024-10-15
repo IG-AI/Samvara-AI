@@ -3,12 +3,15 @@
 # Log the arguments to a file for debugging
 echo "Arguments: $@" >> ~/Samvara-AI/debug.log
 
-# Check if the first argument is -x to run the debugger
-if [[ "$1" == "-x" ]]; then
+# Call the debugger or run Samvara-AI based on arguments
+if [[ "$1" == "-x" || "$1" == "--debug" ]]; then
     echo "Running debugger for Samvara-AI..." >> ~/Samvara-AI/debug.log
-    python3 ~/Samvara-AI/utils/debugger.py -x
+    python3 $SAMVARA_DIR/utils/debugger.py "$@"
+elif [[ "$1" == "-s" || "$1" == "--screen" ]]; then
+    echo "Running Samvara-AI on screen: $2" >> ~/Samvara-AI/debug.log
+    python3 $SAMVARA_DIR/utils/debugger.py "$@"
 else
-    # Otherwise, run the Samvara-AI Docker container
-    echo "Running Samvara-AI in Docker..." >> ~/Samvara-AI/debug.log
-    ~/Samvara-AI/scripts/run_samvara.sh
+    # Otherwise, run Samvara-AI normally
+    echo "Running Samvara-AI..." >> ~/Samvara-AI/debug.log
+    $SAMVARA_DIR/scripts/run_samvara.sh
 fi

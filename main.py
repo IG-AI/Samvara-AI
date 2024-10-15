@@ -1,4 +1,5 @@
 import time
+import sys
 import os
 import numpy as np
 import tensorflow as tf
@@ -9,6 +10,11 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import logging
 from utils.helpers import safe_remove, safe_remove_hdf5_dataset, ensure_directory_exists_and_writable, clear_existing_checkpoints
 from utils.gpu_monitor import start_gpu_monitoring
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Ensure the utils folder is in the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'utils')))
 
 # Set logging configuration
 logging.basicConfig(level=logging.INFO)
