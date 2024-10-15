@@ -9,6 +9,10 @@ from unittest.mock import patch, MagicMock
 from utils.helpers import safe_remove, safe_remove_hdf5_dataset, ensure_directory_exists_and_writable, clear_existing_checkpoints
 from utils.gpu_monitor import start_gpu_monitoring
 
+def some_function():
+    from utils.debugger import check_directory_permissions
+    # function body
+
 class TestDebuggerFunctions(unittest.TestCase):
 
     @patch("os.path.exists")
