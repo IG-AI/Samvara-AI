@@ -307,7 +307,7 @@ def test_model_config(model_name, model_class):
         config = model.get_config()
         model_summary = []
         model.summary(print_fn=lambda x: model_summary.append(x))
-        return f"{model_name} config and summary:\nConfig: {config}\nSummary: {'\n'.join(model_summary)}"
+        return f"{model_name} config and summary:\nConfig: {config}\nSummary: " + "\n".join(model_summary)
     except Exception as e:
         return f"Error getting config or summary for {model_name}: {str(e)}"
 
