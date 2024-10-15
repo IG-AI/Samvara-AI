@@ -29,6 +29,14 @@ class CustomQuantumLayer(tf.keras.layers.Layer):
     def compute_output_shape(self, input_shape):
         return (input_shape[0][0], self.units)
 
+    # Adding the required get_config() method
+    def get_config(self):
+        config = super(CustomQuantumLayer, self).get_config()
+        config.update({
+            "units": self.units
+        })
+        return config
+
 # Build the immaterial model
 def build_immaterial_model():
     real_input = layers.Input(shape=(2,), dtype=tf.float32, name="real_input")
