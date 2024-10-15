@@ -6,7 +6,7 @@ ARG USERNAME=samvarauser
 ARG USER_UID=1001
 ARG USER_GID=$USER_UID
 
-# Install necessary libraries and tools, including locales for UTF-8
+# Install necessary libraries and tools, including locales
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -19,13 +19,8 @@ RUN apt-get update && apt-get install -y \
     locales \
     && rm -rf /var/lib/apt/lists/*
 
-# Set up locales for en_SE.UTF-8
-RUN locale-gen en_SE.UTF-8 && \
-    update-locale LANG=en_SE.UTF-8
-
-ENV LANG en_SE.UTF-8
-ENV LANGUAGE en_SE:en
-ENV LC_ALL en_SE.UTF-8
+# Set up the locale to en_US.UTF-8
+RUN locale-gen en_US.UTF-8 && update-locale LANG=en_US.UTF-8
 
 # Create a new user and set appropriate permissions
 RUN groupadd --gid $USER_GID $USERNAME \
@@ -33,37 +28,24 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# Switch to the new user
+# Switch to the non-root user
 USER $USERNAME
-WORKDIR /home/$USERNAME/app
+WORKDIR /home/$USERNAME/Samvara-AI
 
 # Set up Python environment
 RUN pip install --upgrade pip
 
-# Install project-specific dependencies and ensure scikit-learn is installed
-COPY requirements.txt /home/$USERNAME/app/requirements.txt
+# Install project-specific dependencies
+COPY requirements.txt /home/$USERNAME/Samvara-AI/requirements.txt
 RUN pip install -r requirements.txt
 
-# Force install scikit-learn to avoid import issues
-RUN pip install scikit-learn
-
-# Ensure cuDNN file is present and install it
-COPY cudnn-linux-x64-v8.6.0.163.tgz /tmp/cudnn.tgz
-RUN tar -xzvf /tmp/cudnn.tgz -C /usr/local \
-    && rm /tmp/cudnn.tgz \
-    && sudo ldconfig
-
-# Set up directories with proper permissions
-RUN mkdir -p /home/$USERNAME/app/checkpoints \
-    && chmod -R 775 /home/$USERNAME/app/checkpoints \
-    && chown -R $USERNAME:$USERNAME /home/$USERNAME/app/checkpoints
-
 # Copy the Samvara-AI project files
-COPY . /home/$USERNAME/app
-RUN chmod -R 775 /home/$USERNAME/app
+COPY . /home/$USERNAME/Samvara-AI
 
 # Expose necessary ports
 EXPOSE 8888 6006
 
-# Command to run the Samvara-AI training script
-CMD ["python", "main.py"]
+# Set the entrypoint script to run_samvara.sh for further setup
+ENTRYPOINT ["/home/samvarauser/Samvara-AI/scripts/run_samvara.sh"]
+
+COPY scripts/run_samvara.sh /home/samvarauser/Samvara-AI/scripts/run_samvara.sh
