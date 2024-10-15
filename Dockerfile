@@ -6,7 +6,7 @@ ARG USERNAME=samvarauser
 ARG USER_UID=1001
 ARG USER_GID=$USER_UID
 
-# Install necessary libraries and tools, including locales
+# Install necessary libraries and tools, including locales and apt-utils
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     sudo \
     locales \
+    apt-utils \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up the locale to en_US.UTF-8
@@ -28,18 +30,25 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# Set up Python environment
-RUN pip install --upgrade pip
-
 # Define Samvara-AI directory as environment variable
 ENV SAMVARA_DIR="/home/$USERNAME/Samvara-AI"
+ENV PATH="/home/$USERNAME/.local/bin:$PATH"
 
 # Set working directory to Samvara-AI directory
 WORKDIR $SAMVARA_DIR
 
-# Install project-specific dependencies
+# Copy the requirements file before switching users
 COPY requirements.txt $SAMVARA_DIR/requirements.txt
-RUN pip install -r requirements.txt
+
+# Switch to the newly created user
+USER $USERNAME
+
+# Set up Python environment and create a virtual environment
+RUN pip install --upgrade pip \
+    && python3 -m venv /home/$USERNAME/venv
+
+# Activate the virtual environment and install dependencies
+RUN /bin/bash -c "source /home/$USERNAME/venv/bin/activate && pip install -r $SAMVARA_DIR/requirements.txt"
 
 # Copy the Samvara-AI project files
 COPY . $SAMVARA_DIR
