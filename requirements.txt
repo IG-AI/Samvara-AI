@@ -1,4 +1,7 @@
 tensorflow==2.10.0
+tensorboard==2.10.0  # Ensure this is compatible
+keras==2.10.0        # Ensure this is compatible
+typing-extensions==4.5.0  # Confirm version compatibility
 pennylane==0.23.1
 scikit-learn==1.3.2
 numpy
