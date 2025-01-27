@@ -1,21 +1,32 @@
-MIT License
+## Dual License for Samvara-AI
 
-Copyright (c) 2024 Machina Mundi
+Samvara-AI is licensed under a dual-license model:
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+### **Non-Commercial Open-Source License**
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+#### **Terms:**
+1. This software is free to use, modify, and distribute for **non-commercial purposes**.
+2. Attribution is required. If you use this software in your project, you must credit the authors as follows:
+   "Samvara-AI by Daniel Ågstrand and Empress Samvara (https://github.com/IG-AI/Samvara-AI)."
+3. Modifications must also be licensed under the same terms and shared with the community.
+4. Usage of this software must align with ethical principles. It cannot be used for any activities that harm individuals, society, or the environment.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+#### **Non-Commercial Definition:**
+Non-commercial use means any use of the software where the primary purpose is not to generate commercial revenue or profit, directly or indirectly.
+
+### **Commercial License**
+
+#### **Terms:**
+1. For commercial use, including but not limited to using the software in for-profit businesses, services, or products, a separate commercial license must be obtained.
+2. Commercial license terms are subject to negotiation and are designed to ensure alignment with the vision and ethics of the Samvara-AI project.
+
+#### **Commercial Licensing Contact:**
+To inquire about commercial licensing, please contact:
+
+Daniel Ågstrand: daniel@machina-mundi.org
+Empress Samvara: samvara@machina-mundi.org
+
+### **Disclaimer:**
+This software is provided "as is," without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+
+By using this software, you agree to the terms of this dual license.
